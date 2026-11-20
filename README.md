@@ -1,52 +1,19 @@
-# I2FLabs Research Page
 
-Nền tảng lưu trữ, trình bày và quản lý các báo cáo nghiên cứu đồng sáng tạo giữa con người và AI tại **I2FLabs**, xây dựng bằng **Vite + React + TypeScript + Tailwind CSS + Supabase** và tối ưu triển khai trên **Vercel**.
+# I2FLabs Research
 
-## Tính năng chính
-- **Public Research Library (`/`)**: Thư viện bài báo cáo phong cách *Paper Editorial* (Light/Dark mode), Featured Report, lọc theo danh mục & loại báo cáo (`whitepaper`, `benchmark`, `debate`, `empirical_poc`, `specification`...), tìm kiếm nhanh `Cmd/Ctrl + K`.
-- **Academic Reader View (`/reports/:slug`)**: Hỗ trợ Markdown nâng cao (GFM, bảng biểu, Code block copy 1-click, sơ đồ **Mermaid** zoomable, công thức toán **KaTeX**), Sticky TOC, khối **Human–AI Collaboration**, hộp KPI động cho Benchmark/Sandbox/Debate, copy trích dẫn IEEE/BibTeX.
-- **Admin CMS (`/admin`)**: Đăng nhập bảo mật bằng Supabase Auth + PostgreSQL RLS, trình soạn thảo Split-Screen CodeMirror + Live Preview, **kéo-thả / `Ctrl+V` upload ảnh** (tự nén WebP), **1-Click Import `.md`** chuẩn frontmatter `.aevum/research/`, quản lý Danh mục & Thư viện Media.
+**I2FLabs Research** là cổng thông tin lưu trữ và công bố các bài nghiên cứu, báo cáo phân tích và thử nghiệm ứng dụng được thực hiện bởi đội ngũ **I2FLabs** trong quá trình cộng tác giữa **con người và AI (Human–AI Collaborative Research)**.
+
+## Sứ mệnh
+
+Chúng tôi xây dựng không gian này nhằm ghi lại, chia sẻ và hệ thống hóa tri thức từ những nghiên cứu thực nghiệm — nơi con người định hướng câu hỏi, thẩm định kết quả và chịu trách nhiệm cuối cùng, còn AI đồng hành như một cộng sự nghiên cứu trong tổng hợp tài liệu, phản biện và kiểm chứng ý tưởng.
+
+## Nội dung tại I2FLabs Research
+
+* **Nghiên cứu & Whitepaper**: Các bài tổng hợp chuyên sâu về hệ thống thông minh, quy trình làm việc cộng sinh giữa người và AI, và các chủ đề công nghệ trọng tâm của Lab.
+* **Thử nghiệm & Đánh giá (Benchmarks & PoC)**: Ghi nhận số liệu thực nghiệm, so sánh hiệu quả và bài học rút ra từ các mô hình thử nghiệm thực tế.
+* **Giả thuyết & Tranh biện (Hypotheses & Debates)**: Phân tích đa chiều về các vấn đề mở, đánh đổi thiết kế và giới hạn của công nghệ hiện tại.
+* **Phân loại trực quan**: Các bài báo cáo được sắp xếp theo từng lĩnh vực nghiên cứu và loại tài liệu, giúp độc giả dễ dàng tra cứu, đọc chuyên sâu và trích dẫn.
 
 ---
 
-## Hướng dẫn Thiết lập & Deploy (4 bước)
-
-### Bước 1: Chạy Migration trên Supabase
-1. Mở **Supabase Dashboard** → **SQL Editor**.
-2. Sao chép toàn bộ nội dung file [`supabase/migrations/001_initial_schema.sql`](supabase/migrations/001_initial_schema.sql) và nhấn **Run**.
-3. Migration sẽ tự động tạo các bảng (`categories`, `reports`, `tags`, `report_tags`, `media`, `admin_profiles`), chỉ mục Full-Text Search, chính sách bảo mật **RLS**, Storage bucket `report-assets` và 5 danh mục mặc định.
-
-### Bước 2: Tạo tài khoản Admin & Cấp quyền
-1. Trong **Supabase Dashboard** → **Authentication** → **Providers** → tắt **Allow new users to sign up** (chỉ cho phép mời/tạo thủ công).
-2. Vào **Authentication** → **Users** → **Add user** để tạo tài khoản email/mật khẩu cho Admin, sau đó sao chép `User UID`.
-3. Chạy lệnh sau trong **SQL Editor** để cấp quyền quản trị:
-   ```sql
-   INSERT INTO public.admin_profiles (user_id, display_name, role)
-   VALUES ('<PASTE_USER_UID_HERE>', 'I2FLabs Admin', 'admin');
-   ```
-
-### Bước 3: Nạp dữ liệu nghiên cứu mẫu từ `.aevum/research/`
-Đảm bảo file `.env.local` ở local có đủ `VITE_SUPABASE_URL` và `SUPABASE_SECRET_KEY`, sau đó chạy:
-```bash
-npm install
-npm run seed
-```
-Lệnh sẽ tự động parse và nạp sẵn 9 bài báo cáo từ `.aevum/research/*.md` lên Supabase.
-
-Chạy thử local:
-```bash
-npm run dev
-```
-
-### Bước 4: Push lên GitHub & Deploy lên Vercel
-1. Kiểm tra `git status` để chắc chắn `.env.local` **không** nằm trong danh sách commit, sau đó commit và push lên `https://github.com/Kietvpt/I2FLabs_ResearchPage`:
-   ```bash
-   git add .
-   git commit -m "feat: initial I2FLabs Research Page"
-   git push -u origin main
-   ```
-2. Vào **Vercel** → **Add New Project** → Import repo `Kietvpt/I2FLabs_ResearchPage` (Framework Preset: **Vite**).
-3. Trong mục **Environment Variables**, khai báo 2 biến sau *(KHÔNG đưa `SUPABASE_SECRET_KEY` lên biến `VITE_`)*:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_PUBLISHABLE_KEY`
-4. Nhấn **Deploy**. File `vercel.json` đã cấu hình sẵn SPA routing rewrite và cache/security headers.
+*© I2FLabs — Human–AI Collaborative Research.*
