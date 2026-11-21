@@ -37,8 +37,8 @@ import {
 import { toast } from 'sonner';
 import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 import { useTheme } from '@/context/ThemeContext';
+import { useDomains } from '@/context/DomainContext';
 import {
-  fetchCategoriesAdmin,
   fetchReportByIdAdmin,
   upsertReport,
 } from '@/features/admin/api';
@@ -94,13 +94,17 @@ export function ReportEditorPage() {
   const [slugTouched, setSlugTouched] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
+  const { domains, selectedDomainId } = useDomains();
+
   // Form states
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [summary, setSummary] = useState('');
   const [contentMd, setContentMd] = useState('');
   const [coverImageUrl, setCoverImageUrl] = useState('');
-  const [categoryId, setCategoryId] = useState<string>('');
+  const [domainId, setDomainId] = useState<string>(() =>
+    selectedDomainId !== 'all' ? selectedDomainId : ''
+  );
   const [reportType, setReportType] = useState<ReportType>('research');
   const [status, setStatus] = useState<ReportStatus>('draft');
   const [isFeatured, setIsFeatured] = useState(false);
@@ -114,11 +118,6 @@ export function ReportEditorPage() {
   const [aiContributors, setAiContributors] = useState<AiContributor[]>([]);
   const [sourceMetadata, setSourceMetadata] = useState<SourceMetadata>({});
   const [publishedAt, setPublishedAt] = useState<string | null>(null);
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ['admin-categories'],
-    queryFn: fetchCategoriesAdmin,
-  });
 
   const { data: existingReport, isLoading: loadingReport } = useQuery({
     queryKey: ['admin-report', id],
@@ -149,12 +148,17 @@ export function ReportEditorPage() {
       if (r.source_metadata) setSourceMetadata(r.source_metadata);
       if (r.published_at) setPublishedAt(r.published_at);
 
-      if (parsed.suggestedCategorySlug && categories.length > 0) {
-        const matched = categories.find((c) => c.slug === parsed.suggestedCategorySlug);
-        if (matched) setCategoryId(matched.id);
+      if (parsed.suggestedCategorySlug && domains.length > 0) {
+        const matched = domains.find(
+          (d) =>
+            d.slug === parsed.suggestedCategorySlug ||
+            d.id === parsed.suggestedCategorySlug ||
+            parsed.suggestedCategorySlug?.includes(d.slug)
+        );
+        if (matched) setDomainId(matched.id);
       }
     },
-    [categories]
+    [domains]
   );
 
   // Hydrate when editing existing report
@@ -166,7 +170,7 @@ export function ReportEditorPage() {
     setSummary(existingReport.summary || '');
     setContentMd(existingReport.content_md || '');
     setCoverImageUrl(existingReport.cover_image_url || '');
-    setCategoryId(existingReport.category_id || '');
+    setDomainId(existingReport.domain_id || '');
     setReportType(existingReport.report_type);
     setStatus(existingReport.status);
     setIsFeatured(existingReport.is_featured);
@@ -195,17 +199,6 @@ export function ReportEditorPage() {
       applyParsedMarkdown(imported);
     }
   }, [isEditing, location.state, applyParsedMarkdown]);
-
-  // Match suggested category once categories load after import
-  useEffect(() => {
-    if (isEditing || categoryId || categories.length === 0) return;
-    const imported = (location.state as { importedReport?: ParsedResearchMarkdown } | null)
-      ?.importedReport;
-    if (imported?.suggestedCategorySlug) {
-      const matched = categories.find((c) => c.slug === imported.suggestedCategorySlug);
-      if (matched) setCategoryId(matched.id);
-    }
-  }, [isEditing, categoryId, categories, location.state]);
 
   const handleTitleChange = (nextTitle: string) => {
     setTitle(nextTitle);
@@ -321,7 +314,8 @@ export function ReportEditorPage() {
         summary: summary.trim() || null,
         content_md: contentMd,
         cover_image_url: coverImageUrl.trim() || null,
-        category_id: categoryId || null,
+        category_id: null,
+        domain_id: domainId || null,
         report_type: reportType,
         status: nextStatus,
         is_featured: isFeatured,
@@ -406,7 +400,7 @@ export function ReportEditorPage() {
                 className={cn(
                   'inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors',
                   viewMode === mode
-                    ? 'bg-accent text-white'
+                    ? 'bg-foreground text-canvas font-medium shadow-xs'
                     : 'text-muted hover:text-foreground'
                 )}
               >
@@ -462,7 +456,7 @@ export function ReportEditorPage() {
             type="button"
             disabled={saveMutation.isPending}
             onClick={() => saveMutation.mutate('published')}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white hover:opacity-95 disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-foreground px-3.5 py-1.5 text-xs font-medium text-canvas hover:opacity-90 disabled:opacity-60 transition-opacity shadow-xs"
           >
             {saveMutation.isPending ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -652,7 +646,7 @@ export function ReportEditorPage() {
                   setSlug(e.target.value);
                 }}
                 placeholder="ten-bai-bao-cao"
-                className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
+                className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:border-foreground/40 focus:ring-1 focus:ring-foreground/20"
               />
             </div>
 
@@ -666,23 +660,25 @@ export function ReportEditorPage() {
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 placeholder="Mô tả ngắn gọn mục tiêu và phát hiện cốt lõi..."
-                className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
+                className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-foreground/40 focus:ring-1 focus:ring-foreground/20"
               />
             </div>
 
-            {/* Category & Report Type */}
+            {/* Domain & Report Type */}
             <div className="grid grid-cols-1 gap-3">
               <div>
-                <label className="block text-xs font-medium text-foreground mb-1">Danh mục</label>
+                <label className="block text-xs font-medium text-foreground mb-1">
+                  Miền nghiên cứu (Research Domain)
+                </label>
                 <select
-                  value={categoryId}
-                  onChange={(e) => setCategoryId(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
+                  value={domainId}
+                  onChange={(e) => setDomainId(e.target.value)}
+                  className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-foreground/40 focus:ring-1 focus:ring-foreground/20"
                 >
-                  <option value="">— Chưa chọn danh mục —</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
+                  <option value="">— Chung toàn viện (Không chọn miền riêng) —</option>
+                  {domains.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name} {d.chair_lead ? `(Chủ trì: ${d.chair_lead})` : ''}
                     </option>
                   ))}
                 </select>
@@ -695,7 +691,7 @@ export function ReportEditorPage() {
                 <select
                   value={reportType}
                   onChange={(e) => setReportType(e.target.value as ReportType)}
-                  className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
+                  className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-foreground/40 focus:ring-1 focus:ring-foreground/20"
                 >
                   {REPORT_TYPES.map((rt) => (
                     <option key={rt.value} value={rt.value}>
@@ -716,7 +712,7 @@ export function ReportEditorPage() {
                 value={tagsText}
                 onChange={(e) => setTagsText(e.target.value)}
                 placeholder="flow_state, benchmark, human_ai"
-                className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
+                className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-foreground/40 focus:ring-1 focus:ring-foreground/20"
               />
             </div>
 
@@ -734,7 +730,7 @@ export function ReportEditorPage() {
                 <button
                   type="button"
                   onClick={() => coverInputRef.current?.click()}
-                  className="inline-flex items-center gap-1 text-[11px] font-medium text-accent hover:underline"
+                  className="inline-flex items-center gap-1 text-[11px] font-medium text-foreground hover:underline"
                 >
                   <Upload className="w-3 h-3" />
                   Upload
@@ -745,7 +741,7 @@ export function ReportEditorPage() {
                 value={coverImageUrl}
                 onChange={(e) => setCoverImageUrl(e.target.value)}
                 placeholder="https://..."
-                className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
+                className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-foreground/40 focus:ring-1 focus:ring-foreground/20"
               />
               {coverImageUrl && (
                 <img
@@ -758,7 +754,7 @@ export function ReportEditorPage() {
 
             {/* Human-AI Collaboration */}
             <div className="pt-3 border-t border-border space-y-3">
-              <h3 className="text-xs font-mono uppercase tracking-wider text-ai font-semibold">
+              <h3 className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
                 Human–AI Collaboration
               </h3>
 
@@ -845,7 +841,7 @@ export function ReportEditorPage() {
                         { agent_name: '', role: 'AI Co-Author' },
                       ])
                     }
-                    className="inline-flex items-center gap-0.5 text-[11px] text-ai hover:underline"
+                    className="inline-flex items-center gap-0.5 text-[11px] text-foreground hover:underline"
                   >
                     <Plus className="w-3 h-3" /> Thêm Agent
                   </button>

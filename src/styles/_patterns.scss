@@ -1,0 +1,240 @@
+// ============================================================================
+// Google DeepMind Authentic Patterns (Based directly on deepmind.google)
+// Zero hover translate, zero flashy glows, clean monochrome horizontal lists
+// ============================================================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ----------------------------------------------------------------------------
+// Pattern 1: DeepMind "Latest News" Horizontal Article Row
+// ----------------------------------------------------------------------------
+.deepmind-news-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  text-decoration: none;
+  background: transparent;
+
+  .news-content {
+    flex: 1;
+    min-width: 0;
+
+    .news-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.015em;
+      transition: color $duration-fast $ease-standard;
+    }
+
+    .news-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+
+      .separator {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  .news-thumb {
+    flex-shrink: 0;
+    width: 88px;
+    height: 88px;
+    border-radius: $radius-md;
+    overflow: hidden;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-subtle);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @media (min-width: 640px) {
+      width: 104px;
+      height: 104px;
+    }
+  }
+
+  &:hover {
+    .news-title {
+      color: var(--accent-primary);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Pattern 2: DeepMind Featured Card (Rounded, Dark Image, Clean Text)
+// ----------------------------------------------------------------------------
+.deepmind-feature-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  aspect-ratio: 16 / 10;
+  padding: 1.75rem;
+  text-decoration: none;
+
+  .feature-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .feature-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.1) 0%,
+        rgba(0, 0, 0, 0.4) 40%,
+        rgba(0, 0, 0, 0.92) 100%
+      );
+    }
+  }
+
+  .feature-info {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .feature-category {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .feature-title {
+      font-size: 1.35rem;
+      font-weight: 500;
+      line-height: 1.25;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .feature-pill-btn {
+      align-self: flex-start;
+      margin-top: 0.75rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: $radius-pill;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #ffffff;
+      transition: background-color $duration-fast $ease-standard;
+    }
+  }
+
+  &:hover {
+    .feature-pill-btn {
+      background: rgba(255, 255, 255, 0.28);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Pattern 3: Minimalist Filter Tab Pill (DeepMind Style)
+// ----------------------------------------------------------------------------
+.deepmind-pill-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.95rem;
+  border-radius: $radius-pill;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all $duration-fast $ease-standard;
+  cursor: pointer;
+
+  &.active {
+    background: var(--text-primary);
+    color: var(--bg-canvas);
+    border-color: var(--text-primary);
+  }
+
+  &:hover:not(.active) {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Pattern 4: Minimalist Editorial Executive Callout (Zero Flashy Colors)
+// ----------------------------------------------------------------------------
+.deepmind-callout {
+  border: 1px solid var(--border-subtle);
+  border-radius: $radius-lg;
+  background-color: var(--bg-surface);
+  padding: 1.5rem 1.75rem;
+  margin: 2rem 0;
+
+  .callout-header {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+  }
+
+  .callout-points {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+
+    li {
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Pattern 5: Ultra-Thin Reading Progress Line
+// ----------------------------------------------------------------------------
+.deepmind-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  z-index: 100;
+
+  .progress-line {
+    height: 100%;
+    background-color: var(--accent-primary);
+    transition: width 60ms linear;
+  }
+}

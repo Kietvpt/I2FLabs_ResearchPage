@@ -16,8 +16,12 @@ dist-ssr
 # Deployment
 .vercel
 
-# Runtime logs & local Agent / Aevum workspace configs
-.aevum/
+# Runtime logs & local Agent / Aevum cache (preserve architecture & domains)
+.aevum/cache/
+.aevum/.internal/
+.aevum/memory/local_transcripts/
+.aevum/current_plan.json
+.aevum-archetype/
 .agents/
 .antigravitycli/
 .gemini/

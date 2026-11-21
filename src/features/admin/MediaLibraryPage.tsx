@@ -110,7 +110,7 @@ export function MediaLibraryPage() {
             type="button"
             disabled={uploading}
             onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-canvas hover:opacity-90 disabled:opacity-60 transition-opacity shadow-xs"
           >
             {uploading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -137,7 +137,7 @@ export function MediaLibraryPage() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white"
+            className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-canvas hover:opacity-90 transition-opacity shadow-xs"
           >
             <Upload className="w-4 h-4" />
             Upload ảnh đầu tiên

@@ -1,0 +1,14 @@
+---
+id: custom_project_rule
+name: Custom Project Engineering Rules
+version: 1.0.0
+tier: dynamic
+priority: 50
+tags:
+  - project
+  - custom
+---
+# Custom Project Engineering Instructions
+Define your project-specific domain rules or code style guidelines here.
+This prompt will be dynamically loaded into Aevum OS when working inside this workspace.
+

@@ -8,6 +8,7 @@ import type {
   ReportInput,
   ReportStatus,
   ReportWithRelations,
+  ResearchDomain,
   Tag,
 } from '@/types/database';
 
@@ -17,6 +18,7 @@ export interface CategoryWithCount extends Category {
 
 interface RawReportRow extends Report {
   category?: Category | null;
+  domain?: ResearchDomain | null;
   report_tags?: Array<{ tag: Tag | null }> | null;
 }
 
@@ -31,6 +33,7 @@ function normalizeReportRow(row: RawReportRow): ReportWithRelations {
   return {
     ...rest,
     category: row.category ?? null,
+    domain: row.domain ?? null,
     tags,
   };
 }
@@ -42,6 +45,7 @@ export async function fetchAllReportsAdmin(): Promise<ReportWithRelations[]> {
       `
       *,
       category:categories(*),
+      domain:research_domains(*),
       report_tags(
         tag:tags(*)
       )
@@ -63,6 +67,7 @@ export async function fetchReportByIdAdmin(id: string): Promise<ReportWithRelati
       `
       *,
       category:categories(*),
+      domain:research_domains(*),
       report_tags(
         tag:tags(*)
       )
@@ -142,6 +147,7 @@ export async function upsertReport(input: ReportInput, id?: string): Promise<Rep
     reading_time: computedReadingTime,
     published_at: publishedAt,
     category_id: fields.category_id || null,
+    domain_id: fields.domain_id || null,
     cover_image_url: fields.cover_image_url?.trim() || null,
     summary: fields.summary?.trim() || null,
   };

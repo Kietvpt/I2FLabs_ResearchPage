@@ -11,14 +11,14 @@ import {
 import { slugify } from '@/lib/utils';
 
 const COLOR_SWATCHES = [
-  '#7C3AED',
-  '#2563EB',
-  '#059669',
-  '#D97706',
-  '#E11D48',
-  '#0891B2',
-  '#4F46E5',
-  '#475569',
+  '#202124',
+  '#3c4043',
+  '#5f6368',
+  '#70757a',
+  '#9aa0a6',
+  '#dadce0',
+  '#e8eaed',
+  '#ffffff',
 ];
 
 export function CategoriesPage() {
@@ -207,7 +207,7 @@ export function CategoriesPage() {
           <button
             type="submit"
             disabled={saveMutation.isPending}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-canvas hover:opacity-90 disabled:opacity-60 transition-opacity shadow-xs"
           >
             {saveMutation.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />

@@ -115,6 +115,7 @@ export async function fetchPublishedReports(): Promise<PublishedReportsResult> {
         `
         *,
         category:categories(*),
+        domain:research_domains(*),
         report_tags(
           tag:tags(*)
         )
@@ -179,6 +180,7 @@ export async function fetchReportBySlug(
       `
       *,
       category:categories(*),
+      domain:research_domains(*),
       report_tags(
         tag:tags(*)
       )
@@ -220,6 +222,7 @@ export async function fetchReportBySlug(
       `
       *,
       category:categories(*),
+      domain:research_domains(*),
       report_tags(
         tag:tags(*)
       )
@@ -230,7 +233,9 @@ export async function fetchReportBySlug(
     .order('published_at', { ascending: false, nullsFirst: false })
     .limit(3);
 
-  if (report.category_id) {
+  if (report.domain_id) {
+    relatedQuery = relatedQuery.eq('domain_id', report.domain_id);
+  } else if (report.category_id) {
     relatedQuery = relatedQuery.eq('category_id', report.category_id);
   }
 

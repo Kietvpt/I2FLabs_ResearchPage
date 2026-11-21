@@ -1,0 +1,278 @@
+[
+  {
+    "type": "cannot_import",
+    "source": "admin_research_studio",
+    "target": "core_platform",
+    "description": "Domain \"admin_research_studio\" không được phép import từ \"core_platform\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "admin_research_studio",
+    "target": "flow_cadence_telemetry",
+    "description": "Domain \"admin_research_studio\" không được phép import từ \"flow_cadence_telemetry\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "admin_research_studio",
+    "target": "mcp_aevum_gateway",
+    "description": "Domain \"admin_research_studio\" không được phép import từ \"mcp_aevum_gateway\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "admin_research_studio",
+    "target": "public_research_portal",
+    "description": "Domain \"admin_research_studio\" không được phép import từ \"public_research_portal\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "auth_and_access_control",
+    "target": "admin_research_studio",
+    "description": "Domain \"auth_and_access_control\" không được phép import từ \"admin_research_studio\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "auth_and_access_control",
+    "target": "compliance_and_data_integrity",
+    "description": "Domain \"auth_and_access_control\" không được phép import từ \"compliance_and_data_integrity\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "auth_and_access_control",
+    "target": "flow_cadence_telemetry",
+    "description": "Domain \"auth_and_access_control\" không được phép import từ \"flow_cadence_telemetry\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "auth_and_access_control",
+    "target": "mcp_aevum_gateway",
+    "description": "Domain \"auth_and_access_control\" không được phép import từ \"mcp_aevum_gateway\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "auth_and_access_control",
+    "target": "public_research_portal",
+    "description": "Domain \"auth_and_access_control\" không được phép import từ \"public_research_portal\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "auth_and_access_control",
+    "target": "research_knowledge_engine",
+    "description": "Domain \"auth_and_access_control\" không được phép import từ \"research_knowledge_engine\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "compliance_and_data_integrity",
+    "target": "admin_research_studio",
+    "description": "Domain \"compliance_and_data_integrity\" không được phép import từ \"admin_research_studio\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "compliance_and_data_integrity",
+    "target": "auth_and_access_control",
+    "description": "Domain \"compliance_and_data_integrity\" không được phép import từ \"auth_and_access_control\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "compliance_and_data_integrity",
+    "target": "flow_cadence_telemetry",
+    "description": "Domain \"compliance_and_data_integrity\" không được phép import từ \"flow_cadence_telemetry\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "compliance_and_data_integrity",
+    "target": "mcp_aevum_gateway",
+    "description": "Domain \"compliance_and_data_integrity\" không được phép import từ \"mcp_aevum_gateway\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "compliance_and_data_integrity",
+    "target": "public_research_portal",
+    "description": "Domain \"compliance_and_data_integrity\" không được phép import từ \"public_research_portal\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "compliance_and_data_integrity",
+    "target": "research_knowledge_engine",
+    "description": "Domain \"compliance_and_data_integrity\" không được phép import từ \"research_knowledge_engine\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "core_platform",
+    "target": "admin_research_studio",
+    "description": "Domain \"core_platform\" không được phép import từ \"admin_research_studio\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "core_platform",
+    "target": "auth_and_access_control",
+    "description": "Domain \"core_platform\" không được phép import từ \"auth_and_access_control\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "core_platform",
+    "target": "compliance_and_data_integrity",
+    "description": "Domain \"core_platform\" không được phép import từ \"compliance_and_data_integrity\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "core_platform",
+    "target": "flow_cadence_telemetry",
+    "description": "Domain \"core_platform\" không được phép import từ \"flow_cadence_telemetry\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "core_platform",
+    "target": "mcp_aevum_gateway",
+    "description": "Domain \"core_platform\" không được phép import từ \"mcp_aevum_gateway\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "core_platform",
+    "target": "public_research_portal",
+    "description": "Domain \"core_platform\" không được phép import từ \"public_research_portal\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "core_platform",
+    "target": "research_knowledge_engine",
+    "description": "Domain \"core_platform\" không được phép import từ \"research_knowledge_engine\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "flow_cadence_telemetry",
+    "target": "admin_research_studio",
+    "description": "Domain \"flow_cadence_telemetry\" không được phép import từ \"admin_research_studio\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "flow_cadence_telemetry",
+    "target": "auth_and_access_control",
+    "description": "Domain \"flow_cadence_telemetry\" không được phép import từ \"auth_and_access_control\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "flow_cadence_telemetry",
+    "target": "compliance_and_data_integrity",
+    "description": "Domain \"flow_cadence_telemetry\" không được phép import từ \"compliance_and_data_integrity\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "flow_cadence_telemetry",
+    "target": "public_research_portal",
+    "description": "Domain \"flow_cadence_telemetry\" không được phép import từ \"public_research_portal\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "flow_cadence_telemetry",
+    "target": "research_knowledge_engine",
+    "description": "Domain \"flow_cadence_telemetry\" không được phép import từ \"research_knowledge_engine\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "mcp_aevum_gateway",
+    "target": "admin_research_studio",
+    "description": "Domain \"mcp_aevum_gateway\" không được phép import từ \"admin_research_studio\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "mcp_aevum_gateway",
+    "target": "auth_and_access_control",
+    "description": "Domain \"mcp_aevum_gateway\" không được phép import từ \"auth_and_access_control\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "mcp_aevum_gateway",
+    "target": "compliance_and_data_integrity",
+    "description": "Domain \"mcp_aevum_gateway\" không được phép import từ \"compliance_and_data_integrity\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "mcp_aevum_gateway",
+    "target": "core_platform",
+    "description": "Domain \"mcp_aevum_gateway\" không được phép import từ \"core_platform\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "mcp_aevum_gateway",
+    "target": "flow_cadence_telemetry",
+    "description": "Domain \"mcp_aevum_gateway\" không được phép import từ \"flow_cadence_telemetry\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "mcp_aevum_gateway",
+    "target": "public_research_portal",
+    "description": "Domain \"mcp_aevum_gateway\" không được phép import từ \"public_research_portal\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "mcp_aevum_gateway",
+    "target": "research_knowledge_engine",
+    "description": "Domain \"mcp_aevum_gateway\" không được phép import từ \"research_knowledge_engine\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "public_research_portal",
+    "target": "admin_research_studio",
+    "description": "Domain \"public_research_portal\" không được phép import từ \"admin_research_studio\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "public_research_portal",
+    "target": "auth_and_access_control",
+    "description": "Domain \"public_research_portal\" không được phép import từ \"auth_and_access_control\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "public_research_portal",
+    "target": "compliance_and_data_integrity",
+    "description": "Domain \"public_research_portal\" không được phép import từ \"compliance_and_data_integrity\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "public_research_portal",
+    "target": "flow_cadence_telemetry",
+    "description": "Domain \"public_research_portal\" không được phép import từ \"flow_cadence_telemetry\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "public_research_portal",
+    "target": "mcp_aevum_gateway",
+    "description": "Domain \"public_research_portal\" không được phép import từ \"mcp_aevum_gateway\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "research_knowledge_engine",
+    "target": "admin_research_studio",
+    "description": "Domain \"research_knowledge_engine\" không được phép import từ \"admin_research_studio\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "research_knowledge_engine",
+    "target": "auth_and_access_control",
+    "description": "Domain \"research_knowledge_engine\" không được phép import từ \"auth_and_access_control\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "research_knowledge_engine",
+    "target": "compliance_and_data_integrity",
+    "description": "Domain \"research_knowledge_engine\" không được phép import từ \"compliance_and_data_integrity\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "research_knowledge_engine",
+    "target": "flow_cadence_telemetry",
+    "description": "Domain \"research_knowledge_engine\" không được phép import từ \"flow_cadence_telemetry\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "research_knowledge_engine",
+    "target": "mcp_aevum_gateway",
+    "description": "Domain \"research_knowledge_engine\" không được phép import từ \"mcp_aevum_gateway\" (không có trong Depends On)"
+  },
+  {
+    "type": "cannot_import",
+    "source": "research_knowledge_engine",
+    "target": "public_research_portal",
+    "description": "Domain \"research_knowledge_engine\" không được phép import từ \"public_research_portal\" (không có trong Depends On)"
+  }
+]

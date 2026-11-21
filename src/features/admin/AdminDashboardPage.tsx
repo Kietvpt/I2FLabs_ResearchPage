@@ -1,24 +1,23 @@
 import { useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useDomains } from '@/context/DomainContext';
 import {
-  Bot,
   Eye,
   FileEdit,
   FilePlus2,
   FileUp,
   Globe,
   GlobeLock,
+  Inbox,
   Loader2,
   Search,
-  Sparkles,
   Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   deleteReport,
   fetchAllReportsAdmin,
-  fetchCategoriesAdmin,
   toggleReportStatus,
 } from '@/features/admin/api';
 import { parseResearchMarkdown } from '@/lib/frontmatter';
@@ -34,10 +33,10 @@ const STATUS_TABS: Array<{ value: 'all' | ReportStatus; label: string }> = [
 ];
 
 const STATUS_BADGE: Record<ReportStatus, string> = {
-  published: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/25',
-  draft: 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/25',
-  in_review: 'bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/25',
-  archived: 'bg-zinc-500/15 text-zinc-600 dark:text-zinc-400 border-zinc-500/25',
+  published: 'border border-border bg-subtle text-foreground',
+  draft: 'border border-border/50 bg-transparent text-muted',
+  in_review: 'border border-border/70 bg-subtle/40 text-foreground/80',
+  archived: 'border border-border/30 bg-transparent text-muted/60',
 };
 
 export function AdminDashboardPage() {
@@ -45,8 +44,8 @@ export function AdminDashboardPage() {
   const queryClient = useQueryClient();
   const importInputRef = useRef<HTMLInputElement | null>(null);
 
+  const { domains, selectedDomainId, setSelectedDomainId } = useDomains();
   const [statusFilter, setStatusFilter] = useState<'all' | ReportStatus>('all');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const {
@@ -56,11 +55,6 @@ export function AdminDashboardPage() {
   } = useQuery({
     queryKey: ['admin-reports'],
     queryFn: fetchAllReportsAdmin,
-  });
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ['admin-categories'],
-    queryFn: fetchCategoriesAdmin,
   });
 
   const toggleStatusMutation = useMutation({
@@ -96,15 +90,22 @@ export function AdminDashboardPage() {
     const q = searchQuery.trim().toLowerCase();
     return reports.filter((report) => {
       if (statusFilter !== 'all' && report.status !== statusFilter) return false;
-      if (categoryFilter !== 'all' && report.category_id !== categoryFilter) return false;
+      if (selectedDomainId !== 'all') {
+        const matchesDomain =
+          report.domain_id === selectedDomainId ||
+          report.domain?.id === selectedDomainId ||
+          report.domain?.slug === selectedDomainId;
+        if (!matchesDomain) return false;
+      }
       if (!q) return true;
       const inTitle = report.title.toLowerCase().includes(q);
       const inSlug = report.slug.toLowerCase().includes(q);
       const inType = report.report_type.toLowerCase().includes(q);
+      const inDomain = (report.domain?.name ?? '').toLowerCase().includes(q);
       const inTags = (report.tags || []).some((t) => t.name.toLowerCase().includes(q));
-      return inTitle || inSlug || inType || inTags;
+      return inTitle || inSlug || inType || inDomain || inTags;
     });
-  }, [reports, statusFilter, categoryFilter, searchQuery]);
+  }, [reports, statusFilter, selectedDomainId, searchQuery]);
 
   const handleImportMarkdown = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -156,16 +157,16 @@ export function AdminDashboardPage() {
           <button
             type="button"
             onClick={() => importInputRef.current?.click()}
-            className="inline-flex items-center gap-2 rounded-lg border border-ai-border bg-ai-soft text-ai px-3.5 py-2 text-sm font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface text-foreground px-4 py-2 text-xs font-medium hover:bg-subtle transition-colors"
           >
-            <FileUp className="w-4 h-4" />
+            <FileUp className="w-3.5 h-3.5" />
             Import .md
           </button>
           <Link
             to="/admin/reports/new"
-            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-95 transition-opacity"
+            className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-xs font-medium text-canvas hover:opacity-90 transition-opacity shadow-sm"
           >
-            <FilePlus2 className="w-4 h-4" />
+            <FilePlus2 className="w-3.5 h-3.5" />
             New Report
           </Link>
         </div>
@@ -174,20 +175,20 @@ export function AdminDashboardPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-surface border border-border rounded-xl p-4">
-          <p className="text-xs font-mono uppercase tracking-wider text-muted">Tổng báo cáo</p>
+          <p className="text-[11px] font-mono uppercase tracking-wider text-muted">Tổng báo cáo</p>
           <p className="text-2xl font-semibold text-foreground mt-1 tabular-nums">{stats.total}</p>
         </div>
         <div className="bg-surface border border-border rounded-xl p-4">
-          <p className="text-xs font-mono uppercase tracking-wider text-muted">Đã xuất bản</p>
-          <p className="text-2xl font-semibold text-emerald-600 dark:text-emerald-400 mt-1 tabular-nums">
+          <p className="text-[11px] font-mono uppercase tracking-wider text-muted">Đã xuất bản</p>
+          <p className="text-2xl font-semibold text-foreground mt-1 tabular-nums">
             {stats.published}
           </p>
         </div>
         <div className="bg-surface border border-border rounded-xl p-4">
-          <p className="text-xs font-mono uppercase tracking-wider text-muted">
+          <p className="text-[11px] font-mono uppercase tracking-wider text-muted">
             Bản nháp / Đang duyệt
           </p>
-          <p className="text-2xl font-semibold text-amber-600 dark:text-amber-400 mt-1 tabular-nums">
+          <p className="text-2xl font-semibold text-foreground mt-1 tabular-nums">
             {stats.drafts}
           </p>
         </div>
@@ -202,10 +203,8 @@ export function AdminDashboardPage() {
               type="button"
               onClick={() => setStatusFilter(tab.value)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
-                statusFilter === tab.value
-                  ? 'bg-accent text-white'
-                  : 'text-muted hover:text-foreground hover:bg-subtle'
+                'deepmind-pill-tab',
+                statusFilter === tab.value && 'active'
               )}
             >
               {tab.label}
@@ -215,14 +214,14 @@ export function AdminDashboardPage() {
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
           <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="rounded-lg border border-border bg-canvas px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
+            value={selectedDomainId}
+            onChange={(e) => setSelectedDomainId(e.target.value)}
+            className="rounded-lg border border-border bg-canvas px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
           >
-            <option value="all">Tất cả danh mục</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
+            <option value="all">Tất cả miền nghiên cứu</option>
+            {domains.map((dom) => (
+              <option key={dom.id} value={dom.id}>
+                {dom.name}
               </option>
             ))}
           </select>
@@ -252,7 +251,7 @@ export function AdminDashboardPage() {
         </div>
       ) : filteredReports.length === 0 ? (
         <div className="bg-surface border border-border rounded-xl p-12 text-center">
-          <Sparkles className="w-8 h-8 text-muted mx-auto mb-3" />
+          <Inbox className="w-8 h-8 text-muted mx-auto mb-3" />
           <p className="text-base font-medium text-foreground">Chưa có báo cáo nào phù hợp</p>
           <p className="text-sm text-muted mt-1 mb-5">
             Bắt đầu bằng cách tạo báo cáo mới hoặc nhấn Import .md để nhập nhanh từ `.aevum/research/`.
@@ -261,16 +260,16 @@ export function AdminDashboardPage() {
             <button
               type="button"
               onClick={() => importInputRef.current?.click()}
-              className="inline-flex items-center gap-2 rounded-lg border border-ai-border bg-ai-soft text-ai px-3.5 py-2 text-sm font-medium"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface text-foreground px-4 py-2 text-xs font-medium hover:bg-subtle transition-colors"
             >
-              <FileUp className="w-4 h-4" />
+              <FileUp className="w-3.5 h-3.5" />
               Import .md
             </button>
             <Link
               to="/admin/reports/new"
-              className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white"
+              className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-xs font-medium text-canvas hover:opacity-90 transition-opacity shadow-sm"
             >
-              <FilePlus2 className="w-4 h-4" />
+              <FilePlus2 className="w-3.5 h-3.5" />
               Tạo báo cáo đầu tiên
             </Link>
           </div>
@@ -280,51 +279,47 @@ export function AdminDashboardPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-border bg-subtle/60 text-xs font-mono uppercase tracking-wider text-muted">
-                  <th className="py-3 px-4">Báo cáo</th>
-                  <th className="py-3 px-4">Danh mục / Loại</th>
-                  <th className="py-3 px-4">Trạng thái</th>
-                  <th className="py-3 px-4">Cập nhật</th>
-                  <th className="py-3 px-4 text-right">Thao tác</th>
+                <tr className="border-b border-border bg-surface/50 text-[11px] font-mono uppercase tracking-wider text-muted">
+                  <th className="py-3 px-4 font-normal">Báo cáo</th>
+                  <th className="py-3 px-4 font-normal">Miền / Loại hình</th>
+                  <th className="py-3 px-4 font-normal">Trạng thái</th>
+                  <th className="py-3 px-4 font-normal">Cập nhật</th>
+                  <th className="py-3 px-4 text-right font-normal">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border text-sm">
                 {filteredReports.map((report) => (
-                  <tr key={report.id} className="hover:bg-subtle/40 transition-colors">
+                  <tr key={report.id} className="hover:bg-subtle/30 transition-colors">
                     <td className="py-3.5 px-4 max-w-md">
                       <div className="font-medium text-foreground line-clamp-1">
                         <Link
                           to={`/admin/reports/${report.id}/edit`}
-                          className="hover:text-accent transition-colors"
+                          className="hover:text-muted transition-colors"
                         >
                           {report.title}
                         </Link>
                       </div>
                       <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-muted">
-                        <span className="font-mono truncate max-w-[220px]">/{report.slug}</span>
+                        <span className="font-mono text-[11px] truncate max-w-[220px]">
+                          /{report.slug}
+                        </span>
                         {report.ai_contributors?.length > 0 && (
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-ai-soft text-ai border border-ai-border text-[11px]">
-                            <Bot className="w-3 h-3" />
-                            {report.ai_contributors.map((a) => a.agent_name).join(', ')}
-                          </span>
+                          <>
+                            <span className="text-muted/40">•</span>
+                            <span className="font-mono text-[11px] text-muted">
+                              w/ {report.ai_contributors.map((a) => a.agent_name).join(', ')}
+                            </span>
+                          </>
                         )}
                       </div>
                     </td>
 
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <div className="flex flex-col gap-1 items-start">
-                        {report.category ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground">
-                            <span
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: report.category.color }}
-                            />
-                            {report.category.name}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-muted">Chưa phân loại</span>
-                        )}
-                        <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-subtle text-muted">
+                        <span className="text-xs font-medium text-foreground">
+                          {report.domain?.name ?? 'Toàn bộ Viện'}
+                        </span>
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border/60 text-muted">
                           {report.report_type}
                         </span>
                       </div>
@@ -333,7 +328,7 @@ export function AdminDashboardPage() {
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <span
                         className={cn(
-                          'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border',
+                          'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono',
                           STATUS_BADGE[report.status]
                         )}
                       >
@@ -349,7 +344,7 @@ export function AdminDashboardPage() {
                       <div className="flex items-center justify-end gap-1">
                         <Link
                           to={`/admin/reports/${report.id}/edit`}
-                          className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-subtle"
+                          className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-subtle transition-colors"
                           title="Chỉnh sửa"
                         >
                           <FileEdit className="w-4 h-4" />
@@ -359,7 +354,7 @@ export function AdminDashboardPage() {
                             to={`/reports/${report.slug}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-subtle"
+                            className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-subtle transition-colors"
                             title="Xem trang công khai"
                           >
                             <Eye className="w-4 h-4" />
@@ -374,20 +369,22 @@ export function AdminDashboardPage() {
                               nextStatus: report.status === 'published' ? 'draft' : 'published',
                             })
                           }
-                          className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-subtle"
-                          title={report.status === 'published' ? 'Chuyển về Draft' : 'Xuất bản ngay'}
+                          className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-subtle transition-colors"
+                          title={
+                            report.status === 'published' ? 'Chuyển về Draft' : 'Xuất bản ngay'
+                          }
                         >
                           {report.status === 'published' ? (
-                            <GlobeLock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                            <GlobeLock className="w-4 h-4" />
                           ) : (
-                            <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                            <Globe className="w-4 h-4" />
                           )}
                         </button>
                         <button
                           type="button"
                           disabled={deleteMutation.isPending}
                           onClick={() => handleDelete(report.id, report.title)}
-                          className="p-1.5 rounded-lg text-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10"
+                          className="p-1.5 rounded-lg text-muted hover:text-red-400 hover:bg-subtle transition-colors"
                           title="Xóa báo cáo"
                         >
                           <Trash2 className="w-4 h-4" />

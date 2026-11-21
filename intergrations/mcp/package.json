@@ -1,0 +1,40 @@
+{
+  "name": "@i2flabs/aevum-mcp-server",
+  "version": "1.0.0",
+  "description": "Vercel-ready Model Context Protocol (MCP) server for I2FLabs Research Page & Aevum OS Local Bridge",
+  "type": "module",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "bin": {
+    "aevum-mcp": "dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx watch src/cli.ts",
+    "dev:http": "tsx watch src/httpServer.ts",
+    "serve": "tsx src/httpServer.ts",
+    "build": "tsc",
+    "start": "node dist/src/cli.js",
+    "test:local": "tsx test/test-local.ts"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "aevum-os",
+    "i2flabs",
+    "research",
+    "vercel",
+    "sse"
+  ],
+  "author": "I2FLabs Research Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

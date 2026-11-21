@@ -1,0 +1,51 @@
+// ============================================================================
+// Google DeepMind Authentic Design System Entry
+// Minimalist, Austere, Editorial Excellence
+// ============================================================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'typography';
+@use 'patterns';
+
+:root {
+  // Light Mode (Google Clean White)
+  --bg-canvas: #{$palette-paper-canvas};
+  --bg-surface: #{$palette-paper-surface};
+  --bg-subtle: #{$palette-paper-subtle};
+  --bg-surface-glass: rgba(255, 255, 255, 0.92);
+
+  --border-subtle: #{$palette-paper-border};
+  --border-hover: #{$palette-paper-border-hover};
+
+  --text-primary: #{$palette-paper-text-1};
+  --text-secondary: #{$palette-paper-text-2};
+  --text-tertiary: #{$palette-paper-text-3};
+
+  --accent-primary: #{$palette-deepmind-blue};
+  --accent-primary-hover: #1557b0;
+  --accent-primary-soft: rgba(26, 115, 232, 0.08);
+
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+.dark {
+  // Dark Mode (Google DeepMind Pitch Black)
+  --bg-canvas: #{$palette-space-canvas};
+  --bg-surface: #{$palette-space-surface};
+  --bg-subtle: #{$palette-space-subtle};
+  --bg-surface-glass: rgba(14, 17, 23, 0.92);
+
+  --border-subtle: #{$palette-space-border};
+  --border-hover: #{$palette-space-border-hover};
+
+  --text-primary: #{$palette-space-text-1};
+  --text-secondary: #{$palette-space-text-2};
+  --text-tertiary: #{$palette-space-text-3};
+
+  --accent-primary: #{$palette-deepmind-blue-dark};
+  --accent-primary-hover: #aecbfa;
+  --accent-primary-soft: rgba(138, 180, 248, 0.1);
+}

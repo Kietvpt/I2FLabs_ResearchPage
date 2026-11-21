@@ -21,11 +21,13 @@ const AdminDashboardPage = lazy(() =>
 const ReportEditorPage = lazy(() =>
   import('@/features/admin/ReportEditorPage').then((m) => ({ default: m.ReportEditorPage }))
 );
-const CategoriesPage = lazy(() =>
-  import('@/features/admin/CategoriesPage').then((m) => ({ default: m.CategoriesPage }))
-);
 const MediaLibraryPage = lazy(() =>
   import('@/features/admin/MediaLibraryPage').then((m) => ({ default: m.MediaLibraryPage }))
+);
+const DomainManagementPage = lazy(() =>
+  import('@/features/domains/DomainManagementPage').then((m) => ({
+    default: m.DomainManagementPage,
+  }))
 );
 
 function RouteFallback() {
@@ -56,7 +58,8 @@ export default function App() {
             <Route index element={<AdminDashboardPage />} />
             <Route path="reports/new" element={<ReportEditorPage />} />
             <Route path="reports/:id/edit" element={<ReportEditorPage />} />
-            <Route path="categories" element={<CategoriesPage />} />
+            <Route path="domains" element={<DomainManagementPage />} />
+            <Route path="categories" element={<Navigate to="/admin/domains" replace />} />
             <Route path="media" element={<MediaLibraryPage />} />
           </Route>
         </Route>

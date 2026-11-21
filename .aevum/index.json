@@ -1,0 +1,261 @@
+{
+  "version": "2.1.0",
+  "project": "I2FLabs_ResearchPage",
+  "domains": [
+    {
+      "id": "admin_research_studio",
+      "name": "admin_research_studio",
+      "path": ".aevum/domains/admin_research_studio",
+      "plans": [],
+      "features": [
+        {
+          "id": "admin_workspace_shell",
+          "name": "admin_workspace_shell",
+          "path": "features/admin_workspace_shell",
+          "plans": []
+        },
+        {
+          "id": "domain_management_console",
+          "name": "domain_management_console",
+          "path": "features/domain_management_console",
+          "plans": []
+        },
+        {
+          "id": "paper_editor_and_publishing",
+          "name": "paper_editor_and_publishing",
+          "path": "features/paper_editor_and_publishing",
+          "plans": []
+        }
+      ]
+    },
+    {
+      "id": "auth_and_access_control",
+      "name": "auth_and_access_control",
+      "path": ".aevum/domains/auth_and_access_control",
+      "plans": [],
+      "features": [
+        {
+          "id": "member_domain_governance",
+          "name": "member_domain_governance",
+          "path": "features/member_domain_governance",
+          "plans": []
+        },
+        {
+          "id": "session_and_identity",
+          "name": "session_and_identity",
+          "path": "features/session_and_identity",
+          "plans": []
+        }
+      ]
+    },
+    {
+      "id": "compliance_and_data_integrity",
+      "name": "compliance_and_data_integrity",
+      "path": ".aevum/domains/compliance_and_data_integrity",
+      "plans": [],
+      "features": [
+        {
+          "id": "media_library_and_storage",
+          "name": "media_library_and_storage",
+          "path": "features/media_library_and_storage",
+          "plans": []
+        },
+        {
+          "id": "no_fomo_database_guard",
+          "name": "no_fomo_database_guard",
+          "path": "features/no_fomo_database_guard",
+          "plans": []
+        }
+      ]
+    },
+    {
+      "id": "core_platform",
+      "name": "core_platform",
+      "path": ".aevum/domains/core_platform",
+      "plans": [
+        {
+          "name": "canonical_oddd_architecture_plan.md",
+          "path": "domains/core_platform/plans/canonical_oddd_architecture_plan.md",
+          "status": "done",
+          "updatedAt": "2026-11-21T10:32:00.000Z"
+        }
+      ],
+      "features": [
+        {
+          "id": "styles_and_tokens",
+          "name": "styles_and_tokens",
+          "path": "features/styles_and_tokens",
+          "plans": []
+        },
+        {
+          "id": "supabase_client_and_storage",
+          "name": "supabase_client_and_storage",
+          "path": "features/supabase_client_and_storage",
+          "plans": []
+        },
+        {
+          "id": "type_system_and_contracts",
+          "name": "type_system_and_contracts",
+          "path": "features/type_system_and_contracts",
+          "plans": []
+        }
+      ]
+    },
+    {
+      "id": "flow_cadence_telemetry",
+      "name": "flow_cadence_telemetry",
+      "path": ".aevum/domains/flow_cadence_telemetry",
+      "plans": [],
+      "features": [
+        {
+          "id": "cadence_50_10_benchmarks",
+          "name": "cadence_50_10_benchmarks",
+          "path": "features/cadence_50_10_benchmarks",
+          "plans": []
+        },
+        {
+          "id": "system_verification_and_build",
+          "name": "system_verification_and_build",
+          "path": "features/system_verification_and_build",
+          "plans": []
+        }
+      ]
+    },
+    {
+      "id": "mcp_aevum_gateway",
+      "name": "mcp_aevum_gateway",
+      "path": ".aevum/domains/mcp_aevum_gateway",
+      "plans": [],
+      "features": [
+        {
+          "id": "aevum_os_local_bridge",
+          "name": "aevum_os_local_bridge",
+          "path": "features/aevum_os_local_bridge",
+          "plans": []
+        },
+        {
+          "id": "mcp_auth_and_security",
+          "name": "mcp_auth_and_security",
+          "path": "features/mcp_auth_and_security",
+          "plans": []
+        },
+        {
+          "id": "vercel_serverless_mcp",
+          "name": "vercel_serverless_mcp",
+          "path": "features/vercel_serverless_mcp",
+          "plans": []
+        }
+      ]
+    },
+    {
+      "id": "public_research_portal",
+      "name": "public_research_portal",
+      "path": ".aevum/domains/public_research_portal",
+      "plans": [],
+      "features": [
+        {
+          "id": "home_and_reading_experience",
+          "name": "home_and_reading_experience",
+          "path": "features/home_and_reading_experience",
+          "plans": []
+        },
+        {
+          "id": "strategic_domain_explorer",
+          "name": "strategic_domain_explorer",
+          "path": "features/strategic_domain_explorer",
+          "plans": []
+        }
+      ]
+    },
+    {
+      "id": "research_knowledge_engine",
+      "name": "research_knowledge_engine",
+      "path": ".aevum/domains/research_knowledge_engine",
+      "plans": [],
+      "features": [
+        {
+          "id": "report_catalog_and_discovery",
+          "name": "report_catalog_and_discovery",
+          "path": "features/report_catalog_and_discovery",
+          "plans": []
+        },
+        {
+          "id": "scholarly_markdown_and_latex",
+          "name": "scholarly_markdown_and_latex",
+          "path": "features/scholarly_markdown_and_latex",
+          "plans": []
+        }
+      ]
+    }
+  ],
+  "global": {
+    "architecture": "global/architecture.md",
+    "conventions": "global/conventions.md",
+    "agent_rules": "global/agent_rules.md",
+    "agent_rules_compressed": "global/agent_rules_compressed.md",
+    "tech_stack": "global/tech_stack.md",
+    "dictionary": "global/dictionary.md",
+    "memory": "global/memory.md",
+    "developer_profile": "global/developer_profile.md",
+    "companion_persona": "global/companion_persona.json",
+    "evolution_report": "global/evolution_report.md",
+    "handshake_registry": "mcp/handshake_registry.json",
+    "knowledge_rules": "Every active persona has a dedicated knowledge folder in `.aevum/global/personas/<id>/knowledge/`. Log project-specific patterns and agent-exclusive wisdom there.",
+    "debtHistory": [
+      88,
+      92,
+      90,
+      95,
+      93,
+      97,
+      100
+    ]
+  },
+  "agents": [
+    {
+      "id": "ALG-ZENITH-A1B2C3",
+      "name": "Zenith",
+      "capability": "Algorithm Design",
+      "level": 1,
+      "knowledgePath": ".aevum/global/personas/zenith/knowledge"
+    },
+    {
+      "id": "ARC-IRIS-7D94D427",
+      "name": "Iris",
+      "capability": "UX Research & Behavioral Science",
+      "level": 1,
+      "knowledgePath": ".aevum/global/personas/iris/knowledge"
+    },
+    {
+      "id": "ARC-VIDUS-AUHD2Y",
+      "name": "Vidus",
+      "capability": "Architect",
+      "level": 1,
+      "knowledgePath": ".aevum/global/personas/vidus/knowledge"
+    },
+    {
+      "id": "DSN-LUNA-3C9A12",
+      "name": "Luna",
+      "capability": "UI/UX Design",
+      "level": 9,
+      "knowledgePath": ".aevum/global/personas/luna/knowledge"
+    },
+    {
+      "id": "ENG-AN-7B9F1D",
+      "name": "An",
+      "capability": "AI Tuning",
+      "level": 1,
+      "knowledgePath": ".aevum/global/personas/an/knowledge"
+    }
+  ],
+  "research": [
+    {
+      "id": "mis_flow_state_seed",
+      "topic": "Tối Ưu Hóa Trạng Thái Dòng Chảy (Flow State) Cùng AI",
+      "author_persona": "An",
+      "status": "completed",
+      "path": "research/tech_optimizing_flow_state_with_ai.md",
+      "date": "2026-09-23"
+    }
+  ]
+}

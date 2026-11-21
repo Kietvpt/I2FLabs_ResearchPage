@@ -1,4 +1,5 @@
 import type { Category, ReportWithRelations } from '@/types/database';
+import { DEFAULT_RESEARCH_DOMAINS } from '@/features/domains/api';
 
 export const DEMO_CATEGORIES: Category[] = [
   {
@@ -59,6 +60,8 @@ export const DEMO_REPORTS: ReportWithRelations[] = [
     cover_image_url: null,
     category_id: 'demo-cat-ai-systems',
     category: DEMO_CATEGORIES[0],
+    domain_id: 'domain-cong-nghe-ai',
+    domain: DEFAULT_RESEARCH_DOMAINS[0],
     report_type: 'whitepaper',
     status: 'published',
     is_featured: true,
@@ -173,6 +176,8 @@ Giao thức yêu cầu mọi tác vụ tự động hóa đều phải đi qua *
     cover_image_url: null,
     category_id: 'demo-cat-benchmarks',
     category: DEMO_CATEGORIES[1],
+    domain_id: 'domain-cong-nghe-ai',
+    domain: DEFAULT_RESEARCH_DOMAINS[0],
     report_type: 'benchmark',
     status: 'published',
     is_featured: false,
@@ -237,6 +242,8 @@ Duy trì phản hồi dưới ngưỡng **300ms** cho các thao tác tra cứu n
     cover_image_url: null,
     category_id: 'demo-cat-dialectic',
     category: DEMO_CATEGORIES[4],
+    domain_id: 'domain-kinh-te-phap-che',
+    domain: DEFAULT_RESEARCH_DOMAINS[4],
     report_type: 'debate',
     status: 'published',
     is_featured: false,

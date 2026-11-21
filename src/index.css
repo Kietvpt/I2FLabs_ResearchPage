@@ -1,4 +1,5 @@
 @import 'katex/dist/katex.min.css';
+@import './styles/index.scss';
 
 @tailwind base;
 @tailwind components;
@@ -14,40 +15,40 @@
     --text-primary: #18181b;
     --text-secondary: #52525b;
 
-    /* Brand & AI Accents */
-    --accent-primary: #2563eb;
-    --accent-primary-hover: #1d4ed8;
-    --accent-primary-soft: #eff6ff;
-    --accent-ai: #7c3aed;
-    --accent-ai-soft: #f5f3ff;
-    --accent-ai-border: #ddd6fe;
+    /* Brand & Editorial Accents (Austere Monochrome) */
+    --accent-primary: #18181b;
+    --accent-primary-hover: #27272a;
+    --accent-primary-soft: #f4f4f5;
+    --accent-ai: #27272a;
+    --accent-ai-soft: #f4f4f5;
+    --accent-ai-border: #e4e4e7;
 
-    /* Semantic Status */
-    --status-published: #059669;
-    --status-draft: #d97706;
-    --status-danger: #dc2626;
+    /* Semantic Status (Austere Editorial) */
+    --status-published: #18181b;
+    --status-draft: #71717a;
+    --status-danger: #71717a;
   }
 
   .dark {
     /* Dark Mode — "Deep Space Precision" */
-    --bg-canvas: #0b0d11;
-    --bg-surface: #13161c;
-    --bg-subtle: #1a1e26;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --text-primary: #f4f4f5;
-    --text-secondary: #a1a1aa;
+    --bg-canvas: #000000;
+    --bg-surface: #0e1117;
+    --bg-subtle: #161b22;
+    --border-subtle: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: #9aa0a6;
 
-    /* Brand & AI Accents */
-    --accent-primary: #60a5fa;
-    --accent-primary-hover: #93c5fd;
-    --accent-primary-soft: rgba(96, 165, 250, 0.12);
-    --accent-ai: #a78bfa;
-    --accent-ai-soft: rgba(139, 92, 246, 0.12);
-    --accent-ai-border: rgba(167, 139, 250, 0.28);
+    /* Brand & Editorial Accents (Austere Monochrome) */
+    --accent-primary: #ffffff;
+    --accent-primary-hover: #e0e0e0;
+    --accent-primary-soft: rgba(255, 255, 255, 0.08);
+    --accent-ai: #e4e4e7;
+    --accent-ai-soft: rgba(255, 255, 255, 0.05);
+    --accent-ai-border: rgba(255, 255, 255, 0.12);
 
-    /* Semantic Status */
-    --status-published: #10b981;
-    --status-draft: #f59e0b;
+    /* Semantic Status (Austere Editorial) */
+    --status-published: #ffffff;
+    --status-draft: #9aa0a6;
     --status-danger: #f87171;
   }
 

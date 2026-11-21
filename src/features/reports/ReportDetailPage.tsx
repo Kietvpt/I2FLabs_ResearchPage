@@ -6,20 +6,15 @@ import {
   BarChart3,
   Check,
   ChevronDown,
-  ChevronRight,
-  Clock,
   Copy,
-  Cpu,
   Edit3,
   ListTree,
   MessageSquare,
   Printer,
   Quote,
   Share2,
-  Sparkles,
   Tag as TagIcon,
   Terminal,
-  User,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { MarkdownRenderer } from '@/components/MarkdownRenderer';
@@ -27,7 +22,6 @@ import { useAuth } from '@/context/AuthContext';
 import type { ReportWithRelations } from '@/types/database';
 import { cn, formatDate } from '@/lib/utils';
 import {
-  COLLABORATION_MODE_LABELS,
   fetchReportBySlug,
   REPORT_TYPE_LABELS,
 } from './api';
@@ -163,7 +157,7 @@ function StructuredMetricsCard({ report }: { report: ReportWithRelations }) {
               {debate.personas.map((persona) => (
                 <span
                   key={persona}
-                  className="rounded-full border border-ai-border bg-ai-soft px-2.5 py-0.5 text-xs font-medium text-ai"
+                  className="rounded-full border border-border bg-subtle px-2.5 py-0.5 font-mono text-xs text-foreground"
                 >
                   {persona}
                 </span>
@@ -172,6 +166,35 @@ function StructuredMetricsCard({ report }: { report: ReportWithRelations }) {
           )}
         </div>
       )}
+    </section>
+  );
+}
+
+function AtAGlanceCard({ report }: { report: ReportWithRelations }) {
+  const meta = report.source_metadata || {};
+  const customTakeaways = Array.isArray(meta.key_takeaways) && meta.key_takeaways.length > 0
+    ? (meta.key_takeaways as string[])
+    : null;
+
+  const points = customTakeaways ?? [
+    `Challenge: ${report.summary || 'Exploring architectural and computational frontiers of cognitive systems.'}`,
+    `Discovery: Multi-agent cooperative workflows and empirical telemetry benchmarks.`,
+    `Impact: Standardized scientific publication model ready for enterprise AI adoption.`
+  ];
+
+  return (
+    <section className="deepmind-callout print:border print:bg-white" aria-label="Executive Summary Takeaways">
+      <div className="callout-header">
+        At a glance
+      </div>
+      <ul className="callout-points">
+        {points.map((pt, idx) => (
+          <li key={idx} className="flex items-start gap-2">
+            <span className="text-muted shrink-0">•</span>
+            <span>{pt}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -354,45 +377,42 @@ export function ReportDetailPage() {
     );
   }
 
-  const accentColor = report.category?.color || '#4F46E5';
+
 
   return (
     <>
-      {/* 2px Reading Progress Bar */}
-      <div
-        className="fixed left-0 top-0 z-50 h-[2px] bg-accent transition-[width] duration-75 print:hidden"
-        style={{ width: `${progress}%` }}
-        aria-hidden="true"
-      />
+      {/* Google DeepMind Minimalist Reading Progress Line */}
+      <div className="deepmind-progress-bar print:hidden" aria-hidden="true">
+        <div className="progress-line" style={{ width: `${progress}%` }} />
+      </div>
 
       <article className="mx-auto max-w-[1360px] px-4 py-8 sm:px-6 lg:px-8">
         {/* Header Block */}
         <header className="mx-auto max-w-[920px]">
           <nav
-            className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-muted print:hidden"
+            className="mb-6 flex flex-wrap items-center gap-2 text-xs text-muted print:hidden"
             aria-label="Breadcrumb"
           >
-            <Link to="/" className="transition hover:text-foreground">
+            <Link to="/" className="hover:text-foreground">
               Research
             </Link>
-            <ChevronRight className="h-3.5 w-3.5" />
-            {report.category ? (
-              <span
-                className="font-medium"
-                style={{ color: accentColor }}
-              >
+            <span>/</span>
+            {report.domain ? (
+              <span className="text-foreground">
+                {report.domain.name}
+              </span>
+            ) : report.category ? (
+              <span className="text-foreground">
                 {report.category.name}
               </span>
             ) : (
-              <span>Uncategorized</span>
+              <span>Toàn Viện</span>
             )}
-            <ChevronRight className="h-3.5 w-3.5" />
-            <span className="rounded bg-subtle px-1.5 py-0.5 font-mono text-[10px] uppercase text-foreground/80">
-              {REPORT_TYPE_LABELS[report.report_type]}
-            </span>
+            <span>/</span>
+            <span>{REPORT_TYPE_LABELS[report.report_type]}</span>
           </nav>
 
-          <h1 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-[2.5rem]">
+          <h1 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]">
             {report.title}
           </h1>
 
@@ -402,100 +422,36 @@ export function ReportDetailPage() {
             </p>
           )}
 
-          {/* Human–AI Collaboration Card */}
-          <section className="mt-6 rounded-xl border border-ai-border bg-ai-soft/60 p-5">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ai-border/70 pb-3">
-              <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ai">
-                <Sparkles className="h-4 w-4" />
-                <span>
-                  {COLLABORATION_MODE_LABELS[report.collaboration_mode]}
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-3 font-mono text-xs tabular-nums text-muted">
-                <span>{formatDate(report.published_at ?? report.created_at)}</span>
-                <span>•</span>
-                <span className="inline-flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5" />
-                  {report.reading_time} phút đọc
-                </span>
-                <span>•</span>
-                <span>v{report.version}</span>
-              </div>
+          {/* Editorial Authorship Metadata Line */}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-y border-border py-4 text-sm text-muted">
+            <div className="flex flex-wrap items-center gap-1.5 text-foreground">
+              <span className="text-muted">By</span>
+              <span className="font-medium">
+                {report.human_authors.length > 0
+                  ? report.human_authors.map((a) => a.name).join(', ')
+                  : 'I2FLabs Research Team'}
+              </span>
+              {report.ai_contributors.length > 0 && (
+                <>
+                  <span className="text-muted">with</span>
+                  <span className="font-medium text-foreground">
+                    {report.ai_contributors.map((a) => a.agent_name).join(', ')}
+                  </span>
+                </>
+              )}
             </div>
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <div>
-                <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-muted">
-                  <User className="h-3.5 w-3.5" />
-                  <span>Human Researchers</span>
-                </div>
-                {report.human_authors.length > 0 ? (
-                  <ul className="space-y-1 text-sm">
-                    {report.human_authors.map((author, idx) => (
-                      <li key={idx} className="text-foreground">
-                        <span className="font-medium">{author.name}</span>
-                        {author.role && (
-                          <span className="ml-1.5 text-xs text-muted">
-                            ({author.role})
-                          </span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-foreground">I2FLabs Research Team</p>
-                )}
-              </div>
-
-              <div>
-                <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-muted">
-                  <Sparkles className="h-3.5 w-3.5 text-ai" />
-                  <span>AI Co-Authors</span>
-                </div>
-                {report.ai_contributors.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {report.ai_contributors.map((ai, idx) => (
-                      <span
-                        key={idx}
-                        title={ai.contribution || ai.role || ai.agent_name}
-                        className="inline-flex items-center gap-1 rounded-md border border-ai-border bg-surface/90 px-2 py-0.5 text-xs font-medium text-ai"
-                      >
-                        {ai.agent_name}
-                        {ai.role && (
-                          <span className="font-normal text-muted">
-                            · {ai.role}
-                          </span>
-                        )}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-muted">Không ghi nhận tác tử AI riêng</p>
-                )}
-              </div>
-
-              <div>
-                <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-muted">
-                  <Cpu className="h-3.5 w-3.5" />
-                  <span>Models Used</span>
-                </div>
-                {report.model_used.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {report.model_used.map((model) => (
-                      <span
-                        key={model}
-                        className="rounded-md border border-border bg-surface px-2 py-0.5 font-mono text-[11px] text-foreground"
-                      >
-                        {model}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="font-mono text-xs text-muted">—</p>
-                )}
-              </div>
+            <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
+              <span>{formatDate(report.published_at ?? report.created_at)}</span>
+              <span>•</span>
+              <span>{report.reading_time} min read</span>
+              <span>•</span>
+              <span>v{report.version}</span>
             </div>
-          </section>
+          </div>
+
+          {/* At a Glance (Executive Scaffolding Callout) */}
+          <AtAGlanceCard report={report} />
 
           {/* Structured Metric Highlights (Benchmark / Sandbox / Debate) */}
           <StructuredMetricsCard report={report} />

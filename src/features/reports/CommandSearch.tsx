@@ -7,7 +7,6 @@ import {
   Moon,
   Search,
   Shield,
-  Sparkles,
   Sun,
   X,
 } from 'lucide-react';
@@ -87,12 +86,15 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                 const searchValue = [
                   report.title,
                   report.summary ?? '',
+                  report.domain?.name ?? '',
                   report.category?.name ?? '',
                   REPORT_TYPE_LABELS[report.report_type] ?? report.report_type,
                   ...(report.tags?.map((t) => t.name) ?? []),
                   ...report.model_used,
                   ...report.ai_contributors.map((a) => a.agent_name),
                 ].join(' ');
+
+                const domainName = report.domain?.name ?? report.category?.name;
 
                 return (
                   <Command.Item
@@ -104,7 +106,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                     }}
                     className="flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2.5 text-sm transition aria-selected:bg-subtle"
                   >
-                    <FileText className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                    <FileText className="mt-0.5 h-4 w-4 shrink-0 text-foreground/70" />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="truncate font-medium text-foreground">
@@ -112,9 +114,9 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                         </span>
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted">
-                        {report.category && (
+                        {domainName && (
                           <span className="font-medium text-foreground/75">
-                            {report.category.name}
+                            {domainName}
                           </span>
                         )}
                         <span>•</span>
@@ -122,8 +124,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                         {report.model_used.length > 0 && (
                           <>
                             <span>•</span>
-                            <span className="inline-flex items-center gap-1 text-ai">
-                              <Sparkles className="h-3 w-3" />
+                            <span className="font-mono text-[11px] text-muted">
                               {report.model_used[0]}
                             </span>
                           </>

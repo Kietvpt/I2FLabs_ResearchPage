@@ -6,8 +6,7 @@ import {
   ExternalLink,
   FilePlus2,
   FileText,
-  FlaskConical,
-  FolderTree,
+  Globe,
   Image as ImageIcon,
   LogOut,
   Menu,
@@ -18,12 +17,13 @@ import {
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
+import { DomainSelector } from '@/components/domains/DomainSelector';
 import { cn } from '@/lib/utils';
 
 const NAV_ITEMS = [
   { to: '/admin', label: 'All Reports', icon: FileText, end: true },
   { to: '/admin/reports/new', label: 'New Report', icon: FilePlus2, end: false },
-  { to: '/admin/categories', label: 'Categories', icon: FolderTree, end: false },
+  { to: '/admin/domains', label: 'Research Domains', icon: Globe, end: false },
   { to: '/admin/media', label: 'Media Library', icon: ImageIcon, end: false },
 ];
 
@@ -50,13 +50,13 @@ export function AdminLayout() {
           onClick={() => isMobile && setMobileOpen(false)}
           className="flex items-center gap-2.5 min-w-0"
         >
-          <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center shrink-0">
-            <FlaskConical className="w-4 h-4" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface font-mono text-xs font-bold tracking-tight text-foreground shadow-sm shrink-0">
+            I2F
           </div>
           {(!collapsed || isMobile) && (
             <div className="truncate">
               <div className="text-sm font-semibold text-foreground leading-none">I2FLabs</div>
-              <div className="text-[11px] font-mono text-muted mt-0.5">Research CMS</div>
+              <div className="text-[10px] font-mono text-muted mt-0.5">Research CMS</div>
             </div>
           )}
         </Link>
@@ -82,6 +82,16 @@ export function AdminLayout() {
         )}
       </div>
 
+      {/* Domain Workspace Selector */}
+      {(!collapsed || isMobile) && (
+        <div className="p-2.5 border-b border-border/70 shrink-0">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-muted mb-1.5 px-0.5">
+            Không gian miền
+          </div>
+          <DomainSelector variant="sidebar" className="w-full" />
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="flex-1 p-2.5 space-y-1 overflow-y-auto">
         {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
@@ -95,8 +105,8 @@ export function AdminLayout() {
               cn(
                 'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-accent-soft text-accent'
-                  : 'text-muted hover:text-foreground hover:bg-subtle',
+                  ? 'bg-subtle text-foreground'
+                  : 'text-muted hover:text-foreground hover:bg-subtle/50',
                 collapsed && !isMobile && 'justify-center px-2'
               )
             }

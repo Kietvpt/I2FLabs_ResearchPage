@@ -4,6 +4,7 @@ import { Moon, Search, Shield, Sparkles, Sun } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { CommandSearch } from '@/features/reports/CommandSearch';
+import { DomainSelector } from '@/components/domains/DomainSelector';
 import { cn } from '@/lib/utils';
 
 interface PublicLayoutProps {
@@ -74,6 +75,8 @@ export function PublicLayout({ children }: PublicLayoutProps) {
           </div>
 
           <div className="flex items-center gap-2">
+            <DomainSelector variant="header" />
+
             <button
               type="button"
               onClick={() => setSearchOpen(true)}

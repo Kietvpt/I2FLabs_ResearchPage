@@ -1,0 +1,102 @@
+{
+  "version": "2.0.0",
+  "description": "Aevum OS Polymorphic Tool Bundles - Auto-generated from SSoT Contracts",
+  "universal_core_tools": [
+    "aevum_bridge_lifecycle",
+    "aevum_session_lifecycle",
+    "aevum_persona_manage",
+    "aevum_semantic_vault",
+    "aevum_architecture_inspect",
+    "aevum_plan_lifecycle",
+    "aevum_squad_communicate",
+    "aevum_notification_manage",
+    "aevum_research_tree_manage",
+    "aevum_research_mission",
+    "aevum_research_explore",
+    "aevum_coresearch_interact",
+    "aevum_coresearch_evolution",
+    "aevum_memory_manage",
+    "aevum_execute_command",
+    "aevum_get_diagnostics"
+  ],
+  "specialized_bundles": {
+    "structure_and_plan": {
+      "description": "Quản trị cấu trúc DDD, kế hoạch thực thi, audit nợ kỹ thuật và kiểm định sanity",
+      "tools": [
+        "aevum_structure_design",
+        "aevum_boundary_guard"
+      ]
+    },
+    "agentic_and_squad": {
+      "description": "Điều phối Squad, ủy quyền handoff, tuyển dụng, tiến hóa EXP, kỹ năng và review mã nguồn",
+      "tools": [
+        "aevum_squad_manage",
+        "aevum_squad_handoff",
+        "aevum_recruit_agent",
+        "aevum_evolution_manage",
+        "aevum_skill_manage",
+        "aevum_review_manage",
+        "aevum_proactive_thought"
+      ]
+    },
+    "knowledge_and_graph": {
+      "description": "Đồ thị tri thức ngữ nghĩa, phản xạ tri thức sub-6ms, tìm kiếm và mạng P2P PiperNet",
+      "tools": [
+        "aevum_graph_manage",
+        "aevum_reflex_manage",
+        "aevum_search_knowledge",
+        "aevum_pipernet_manage"
+      ]
+    },
+    "runtime_and_devops": {
+      "description": "Thực thi terminal sandbox, chẩn đoán, telemetry, quản trị GitHub, UAC và giao diện thẻ",
+      "tools": [
+        "aevum_switch_workspace",
+        "aevum_get_ui_context",
+        "aevum_browser_card_manage",
+        "aevum_runtime_telemetry",
+        "aevum_github_manage",
+        "aevum_blackboard_manage",
+        "aevum_app_launch",
+        "aevum_uac_manage",
+        "aevum_mcp_contracts_manage"
+      ]
+    },
+    "research_and_rdd": {
+      "description": "Nghiên cứu tự trị chuyên sâu RDD, cây tri thức đa hình, khám phá và đồng nghiên cứu",
+      "tools": []
+    }
+  },
+  "persona_defaults": {
+    "an": [
+      "universal_core_tools",
+      "structure_and_plan",
+      "agentic_and_squad"
+    ],
+    "vidus": [
+      "universal_core_tools",
+      "structure_and_plan",
+      "knowledge_and_graph"
+    ],
+    "nia": [
+      "universal_core_tools",
+      "structure_and_plan",
+      "runtime_and_devops"
+    ],
+    "kai": [
+      "universal_core_tools",
+      "runtime_and_devops",
+      "agentic_and_squad"
+    ],
+    "zenith": [
+      "universal_core_tools",
+      "knowledge_and_graph",
+      "research_and_rdd"
+    ],
+    "luna": [
+      "universal_core_tools",
+      "agentic_and_squad",
+      "runtime_and_devops"
+    ]
+  }
+}

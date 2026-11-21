@@ -1,0 +1,41 @@
+// ============================================================================
+// Google DeepMind Authentic Design Tokens: Strict Minimalism
+// No clutter colors, no glow highlights, no hover translates
+// ============================================================================
+
+// Neutrals - Light Mode (Clean Google Editorial White)
+$palette-paper-canvas:   #ffffff;
+$palette-paper-surface:  #f8f9fa;
+$palette-paper-subtle:   #f1f3f4;
+$palette-paper-border:   #e0e0e0;
+$palette-paper-border-hover: #70757a;
+$palette-paper-text-1:   #202124;
+$palette-paper-text-2:   #5f6368;
+$palette-paper-text-3:   #80868b;
+
+// Neutrals - Dark Mode (Google DeepMind Pitch Black & Charcoal)
+$palette-space-canvas:   #000000;
+$palette-space-surface:  #0e1117;
+$palette-space-subtle:   #161b22;
+$palette-space-border:   rgba(255, 255, 255, 0.12);
+$palette-space-border-hover: rgba(255, 255, 255, 0.28);
+$palette-space-text-1:   #ffffff;
+$palette-space-text-2:   #9aa0a6;
+$palette-space-text-3:   #5f6368;
+
+// Primary Accent (Google / DeepMind Standard Blue - used sparingly)
+$palette-deepmind-blue:      #1a73e8;
+$palette-deepmind-blue-dark: #8ab4f8;
+
+// Radii
+$radius-xs:        4px;
+$radius-sm:        8px;
+$radius-md:        12px;
+$radius-lg:        16px;
+$radius-xl:        20px;
+$radius-pill:      9999px;
+
+// Timings - standard fade without transforms
+$duration-fast:    150ms;
+$duration-normal:  200ms;
+$ease-standard:    cubic-bezier(0.2, 0, 0, 1);
