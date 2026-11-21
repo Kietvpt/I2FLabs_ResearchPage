@@ -2,8 +2,7 @@
   "name": "@i2flabs/aevum-mcp-server",
   "version": "1.0.0",
   "description": "Vercel-ready Model Context Protocol (MCP) server for I2FLabs Research Page & Aevum OS Local Bridge",
-  "type": "module",
-  "main": "src/index.ts",
+  "main": "index.js",
   "bin": {
     "aevum-mcp": "dist/src/cli.js"
   },
@@ -11,8 +10,9 @@
     "dev": "tsx watch src/cli.ts",
     "dev:http": "tsx watch src/httpServer.ts",
     "serve": "tsx src/httpServer.ts",
-    "build": "tsc",
-    "start": "node dist/src/cli.js",
+    "build": "esbuild src/index.ts --bundle --platform=node --format=cjs --target=node20 --footer:js=\"if (module.exports.default && typeof module.exports !== 'function') { const fn = module.exports.default; Object.assign(fn, module.exports); module.exports = fn; }\" --outfile=index.js",
+    "build:tsc": "tsc",
+    "start": "node index.js",
     "test:local": "tsx test/test-local.ts"
   },
   "keywords": [
@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.9",
+    "esbuild": "^0.25.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }

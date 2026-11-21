@@ -2,16 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "rewrites": [
-    { "source": "/api/index", "destination": "/api/index" },
-    { "source": "/api/sse", "destination": "/api/sse" },
-    { "source": "/api/messages", "destination": "/api/messages" },
-    { "source": "/api/rpc", "destination": "/api/rpc" },
-    { "source": "/sse", "destination": "/api/sse" },
-    { "source": "/messages", "destination": "/api/messages" },
-    { "source": "/rpc", "destination": "/api/rpc" },
-    { "source": "/mcp", "destination": "/api/rpc" },
-    { "source": "/", "destination": "/api/index" },
-    { "source": "/(.*)", "destination": "/src/index.ts" }
+    { "source": "/(.*)", "destination": "/index.js" }
   ],
   "headers": [
     {
