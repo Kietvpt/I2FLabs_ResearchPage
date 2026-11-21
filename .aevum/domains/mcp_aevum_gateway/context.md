@@ -19,4 +19,4 @@ Giao thức tương tác liên tác tử (Model Context Protocol - MCP) phục v
 ## Tech Stack
 - **Language:** TypeScript (NodeNext / ES2022)
 - **Runtime:** Vercel Serverless Functions / Node.js Local Daemon
-- **Key Files:** `intergrations/mcp/vercel.json`, `intergrations/mcp/src/server.ts`, `intergrations/mcp/src/auth.ts`
+- **Key Files:** `intergrations/mcp/vercel.json`, `intergrations/mcp/src/createMcpServer.ts`, `intergrations/mcp/src/auth.ts`

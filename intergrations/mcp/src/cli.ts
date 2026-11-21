@@ -3,7 +3,7 @@
  * Stdio entrypoint for Claude Desktop, VS Code, and terminal MCP runners
  */
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { createAevumMcpServer } from './server.js';
+import { createAevumMcpServer } from './createMcpServer.js';
 
 async function main() {
   const server = createAevumMcpServer();

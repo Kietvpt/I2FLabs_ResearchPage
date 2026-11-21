@@ -4,7 +4,7 @@
  */
 import type { IncomingMessage, ServerResponse } from 'http';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
-import { createAevumMcpServer } from '../src/server.js';
+import { createAevumMcpServer } from '../src/createMcpServer.js';
 import { requireMcpAuth } from '../src/auth.js';
 
 // Cache active transports by session ID in-memory
