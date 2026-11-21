@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "I2FLabs Aevum MCP Serverless Gateway on Vercel",
   "type": "module",
+  "main": "src/index.ts",
   "scripts": {
     "build": "npm run build --prefix mcp",
     "dev": "npm run dev --prefix mcp",
