@@ -17,7 +17,16 @@ import rpcHandler from '../api/rpc.js';
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   const host = req.headers.host || 'localhost';
   const url = new URL(req.url || '/', `http://${host}`);
-  const pathname = url.pathname;
+  
+  // Extract route indicator from query param (?route=...), Vercel header, or pathname
+  const routeParam = url.searchParams.get('route');
+  const matchedPath = (req.headers['x-matched-path'] as string) || '';
+  let pathname = routeParam ? `/${routeParam}` : (matchedPath || url.pathname);
+
+  // Normalize: If path is /index.js or /index or empty, default to /
+  if (pathname === '/index.js' || pathname === '/index' || !pathname) {
+    pathname = '/';
+  }
 
   // 1. CORS Preflight
   if (req.method === 'OPTIONS') {
@@ -31,19 +40,19 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   }
 
   // 2. Route Dispatcher
-  if (pathname === '/' || pathname === '/api' || pathname === '/api/index') {
+  if (pathname === '/' || pathname === '/api' || pathname === '/api/index' || routeParam === 'index') {
     return indexHandler(req, res);
   }
 
-  if (pathname === '/rpc' || pathname === '/api/rpc' || pathname === '/mcp') {
+  if (pathname === '/rpc' || pathname === '/api/rpc' || pathname === '/mcp' || routeParam === 'rpc' || routeParam === 'mcp') {
     return rpcHandler(req, res);
   }
 
-  if (pathname === '/sse' || pathname === '/api/sse') {
+  if (pathname === '/sse' || pathname === '/api/sse' || routeParam === 'sse') {
     return sseHandler(req, res);
   }
 
-  if (pathname === '/messages' || pathname === '/api/messages') {
+  if (pathname === '/messages' || pathname === '/api/messages' || routeParam === 'messages') {
     return messagesHandler(req, res);
   }
 

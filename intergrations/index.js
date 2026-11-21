@@ -25228,7 +25228,12 @@ async function handler4(req, res) {
 async function handler5(req, res) {
   const host = req.headers.host || "localhost";
   const url = new URL(req.url || "/", `http://${host}`);
-  const pathname = url.pathname;
+  const routeParam = url.searchParams.get("route");
+  const matchedPath = req.headers["x-matched-path"] || "";
+  let pathname = routeParam ? `/${routeParam}` : matchedPath || url.pathname;
+  if (pathname === "/index.js" || pathname === "/index" || !pathname) {
+    pathname = "/";
+  }
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
       "Access-Control-Allow-Origin": "*",
@@ -25238,16 +25243,16 @@ async function handler5(req, res) {
     res.end();
     return;
   }
-  if (pathname === "/" || pathname === "/api" || pathname === "/api/index") {
+  if (pathname === "/" || pathname === "/api" || pathname === "/api/index" || routeParam === "index") {
     return handler(req, res);
   }
-  if (pathname === "/rpc" || pathname === "/api/rpc" || pathname === "/mcp") {
+  if (pathname === "/rpc" || pathname === "/api/rpc" || pathname === "/mcp" || routeParam === "rpc" || routeParam === "mcp") {
     return handler4(req, res);
   }
-  if (pathname === "/sse" || pathname === "/api/sse") {
+  if (pathname === "/sse" || pathname === "/api/sse" || routeParam === "sse") {
     return handler2(req, res);
   }
-  if (pathname === "/messages" || pathname === "/api/messages") {
+  if (pathname === "/messages" || pathname === "/api/messages" || routeParam === "messages") {
     return handler3(req, res);
   }
   res.writeHead(404, { "Content-Type": "application/json" });
