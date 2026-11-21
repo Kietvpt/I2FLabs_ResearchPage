@@ -1,0 +1,22 @@
+{
+  "name": "@i2flabs/mcp-gateway-integrations",
+  "version": "1.0.0",
+  "description": "I2FLabs Aevum MCP Serverless Gateway on Vercel",
+  "type": "module",
+  "main": "server.ts",
+  "scripts": {
+    "build": "npm run build --prefix mcp",
+    "dev": "npm run dev --prefix mcp",
+    "start": "node mcp/dist/src/cli.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
