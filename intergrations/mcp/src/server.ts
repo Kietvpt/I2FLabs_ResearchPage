@@ -11,6 +11,7 @@ import { CONFIG } from './config.js';
 import { allTools } from './tools/index.js';
 import { allResources } from './resources/index.js';
 import { allPrompts } from './prompts/index.js';
+import { zodToJsonSchema } from './schemaHelper.js';
 
 export function createAevumMcpServer(): Server {
   const server = new Server(
@@ -33,20 +34,7 @@ export function createAevumMcpServer(): Server {
       tools: allTools.map((t) => ({
         name: t.name,
         description: t.description,
-        inputSchema: {
-          type: 'object',
-          properties: (t.parameters as any)._def?.shape
-            ? Object.fromEntries(
-                Object.entries((t.parameters as any)._def.shape).map(([k, v]: [string, any]) => [
-                  k,
-                  {
-                    type: v._def.typeName === 'ZodNumber' ? 'number' : 'string',
-                    description: v._def.description || '',
-                  },
-                ])
-              )
-            : {},
-        },
+        inputSchema: zodToJsonSchema(t.parameters),
       })),
     };
   });

@@ -11,7 +11,7 @@ export const CONFIG = {
     port: parseInt(process.env.PORT || '3300', 10),
   },
   auth: {
-    masterApiKey: process.env.MCP_API_KEY,
+    masterApiKey: process.env.MCP_API_KEY || '',
   },
   aevum: {
     defaultLocalUrl: process.env.AEVUM_LOCAL_URL || 'http://127.0.0.1:3344',
@@ -19,8 +19,8 @@ export const CONFIG = {
     workspacePath: process.env.AEVUM_WORKSPACE_PATH || 'D:/I2FLabs Vietnam/I2FLabs_ResearchPage',
   },
   supabase: {
-    url: process.env.VITE_SUPABASE_URL,
-    anonKey: process.env.VITE_SUPABASE_ANON_KEY,
-    serviceRoleKey: process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
+    url: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '',
+    anonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '',
+    serviceRoleKey: process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   },
 };

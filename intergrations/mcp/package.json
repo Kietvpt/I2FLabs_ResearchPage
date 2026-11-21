@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Vercel-ready Model Context Protocol (MCP) server for I2FLabs Research Page & Aevum OS Local Bridge",
   "type": "module",
-  "main": "dist/server.js",
-  "types": "dist/server.d.ts",
+  "main": "dist/src/server.js",
+  "types": "dist/src/server.d.ts",
   "bin": {
-    "aevum-mcp": "dist/cli.js"
+    "aevum-mcp": "dist/src/cli.js"
   },
   "scripts": {
     "dev": "tsx watch src/cli.ts",

@@ -20,8 +20,13 @@ export async function validateMcpAuth(req: IncomingMessage): Promise<AuthResult>
   const authHeader = req.headers['authorization'];
   let token: string | null = null;
 
-  if (authHeader?.startsWith('Bearer ')) {
-    token = authHeader.slice(7).trim();
+  if (authHeader) {
+    const match = authHeader.match(/^Bearer\s+(.+)$/i);
+    if (match) {
+      token = match[1].trim();
+    } else {
+      token = authHeader.trim();
+    }
   } else if (req.headers['x-api-key']) {
     token = String(req.headers['x-api-key']).trim();
   } else if (req.headers['x-mcp-key']) {
@@ -113,6 +118,8 @@ export async function requireMcpAuth(
     res.writeHead(401, {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-session-id, x-api-key, x-mcp-key',
       'WWW-Authenticate': 'Bearer realm="I2FLabs Aevum MCP Server"',
     });
     res.end(

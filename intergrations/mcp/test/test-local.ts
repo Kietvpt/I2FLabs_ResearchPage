@@ -2,10 +2,51 @@
  * Test script for local MCP server & Aevum OS Bridge
  * Run: npx tsx test/test-local.ts
  */
+import { EventEmitter } from 'events';
 import { allTools } from '../src/tools/index.js';
 import { allResources } from '../src/resources/index.js';
 import { CONFIG } from '../src/config.js';
 import { validateMcpAuth } from '../src/auth.js';
+import rpcHandler from '../api/rpc.js';
+
+function mockRpcCall(body: any, token: string = CONFIG.auth.masterApiKey): Promise<{ status: number; data: any }> {
+  return new Promise((resolve) => {
+    const req = new EventEmitter() as any;
+    req.method = 'POST';
+    req.url = '/rpc';
+    req.headers = {
+      authorization: `Bearer ${token}`,
+      'content-type': 'application/json',
+    };
+
+    let responseData = '';
+    let statusCode = 200;
+
+    const res = {
+      setHeader: () => {},
+      writeHead: (code: number) => {
+        statusCode = code;
+      },
+      end: (data: string) => {
+        responseData = data;
+        let parsed = {};
+        try {
+          parsed = JSON.parse(responseData || '{}');
+        } catch {
+          parsed = { raw: responseData };
+        }
+        resolve({ status: statusCode, data: parsed });
+      },
+    } as any;
+
+    rpcHandler(req, res);
+
+    setTimeout(() => {
+      req.emit('data', Buffer.from(JSON.stringify(body)));
+      req.emit('end');
+    }, 10);
+  });
+}
 
 async function runTests() {
   console.log('====================================================');
@@ -19,17 +60,14 @@ async function runTests() {
 
   // Test 1: Authentication Validation Check
   console.log('--- Test 1: Kiểm định Authentication Key ---');
-  // 1a. Thiếu key
   const mockReqNoKey = { headers: {}, url: '/sse' } as any;
   const noKeyResult = await validateMcpAuth(mockReqNoKey);
   console.log(`  - Không gửi key: Authenticated = ${noKeyResult.authenticated} (${noKeyResult.error})`);
 
-  // 1b. Gửi key sai
   const mockReqBadKey = { headers: { authorization: 'Bearer invalid_key_123' }, url: '/sse' } as any;
   const badKeyResult = await validateMcpAuth(mockReqBadKey);
   console.log(`  - Gửi key sai: Authenticated = ${badKeyResult.authenticated} (${badKeyResult.error})`);
 
-  // 1c. Gửi key đúng qua Header
   const mockReqValidHeader = {
     headers: { authorization: `Bearer ${CONFIG.auth.masterApiKey}` },
     url: '/sse',
@@ -37,7 +75,6 @@ async function runTests() {
   const validHeaderResult = await validateMcpAuth(mockReqValidHeader);
   console.log(`  - Gửi key đúng (Header): Authenticated = ${validHeaderResult.authenticated} (${validHeaderResult.keyName})`);
 
-  // 1d. Gửi key đúng qua Query Param (?apiKey=...)
   const mockReqValidQuery = {
     headers: {},
     url: `/sse?apiKey=${CONFIG.auth.masterApiKey}`,
@@ -84,6 +121,60 @@ async function runTests() {
     const resData = await recentResource.read();
     console.log(resData.contents[0].text);
   }
+
+  // Test 7: Vercel Stateless JSON-RPC Gateway (/api/rpc) Methods
+  console.log('\n--- Test 7: Kiểm thử Stateless JSON-RPC Gateway (/api/rpc) ---');
+
+  // 7a. initialize
+  const initRes = await mockRpcCall({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'initialize',
+    params: { protocolVersion: '2024-11-05' },
+  });
+  console.log('  - method: initialize ->', initRes.data.result?.serverInfo?.name, '(Protocol:', initRes.data.result?.protocolVersion, ')');
+
+  // 7b. ping
+  const pingRes = await mockRpcCall({ jsonrpc: '2.0', id: 2, method: 'ping' });
+  console.log('  - method: ping -> status 200, result =', JSON.stringify(pingRes.data.result));
+
+  // 7c. tools/list (verify inputSchema)
+  const listToolsRes = await mockRpcCall({ jsonrpc: '2.0', id: 3, method: 'tools/list' });
+  const tools = listToolsRes.data.result?.tools || [];
+  const toolsWithSchema = tools.filter((t: any) => t.inputSchema && t.inputSchema.properties);
+  console.log(`  - method: tools/list -> ${tools.length} tools, ${toolsWithSchema.length} tools có inputSchema JSON Schema.`);
+
+  // 7d. tools/call valid
+  const callRes = await mockRpcCall({
+    jsonrpc: '2.0',
+    id: 4,
+    method: 'tools/call',
+    params: {
+      name: 'aevum_bridge_handshake',
+      arguments: { clientName: 'Vercel-Serverless-Tester' },
+    },
+  });
+  console.log('  - method: tools/call (aevum_bridge_handshake) -> isError =', !!callRes.data.result?.isError);
+
+  // 7e. tools/call with invalid params (should return validation error without crashing)
+  const invalidCallRes = await mockRpcCall({
+    jsonrpc: '2.0',
+    id: 5,
+    method: 'tools/call',
+    params: {
+      name: 'aevum_relay_task',
+      arguments: { targetPersona: 'unknown_persona' }, // missing required instruction & taskType
+    },
+  });
+  console.log('  - method: tools/call (invalid args) -> correctly flagged isError =', invalidCallRes.data.result?.isError);
+
+  // 7f. resources/list
+  const listResRes = await mockRpcCall({ jsonrpc: '2.0', id: 6, method: 'resources/list' });
+  console.log('  - method: resources/list ->', listResRes.data.result?.resources?.length, 'resources.');
+
+  // 7g. prompts/list
+  const listPromptsRes = await mockRpcCall({ jsonrpc: '2.0', id: 7, method: 'prompts/list' });
+  console.log('  - method: prompts/list ->', listPromptsRes.data.result?.prompts?.length, 'prompts.');
 
   console.log('\n✅ Hoàn tất bài test kiểm tra tích hợp & Authentication Key.');
 }

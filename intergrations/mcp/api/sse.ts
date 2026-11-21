@@ -36,6 +36,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
   res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
 
   const server = createAevumMcpServer();
   const transport = new SSEServerTransport('/api/messages', res);
