@@ -19,6 +19,8 @@ export type DomainMemberRole = DomainFacultyRole;
 
 export type DomainMemberStatus = 'active' | 'emeritus' | 'suspended' | 'pending';
 
+export type PodRole = 'explorer' | 'formalizer' | 'falsifier' | 'curator';
+
 export type ScientificResourceType =
   | 'dataset'
   | 'benchmark_suite'
@@ -66,7 +68,10 @@ export interface DomainMemberPermissions {
   can_create?: boolean;
   can_edit?: boolean;
   can_delete?: boolean;
-  [key: string]: boolean | undefined;
+  pod_role?: PodRole;
+  paired_human_id?: string;
+  paired_human_name?: string;
+  [key: string]: boolean | string | undefined;
 }
 
 export interface ResearchDomainMember {
@@ -79,6 +84,8 @@ export interface ResearchDomainMember {
   member_type: DomainMemberType;
   persona_aid: string | null;
   role: DomainFacultyRole;
+  pod_role?: PodRole | null;
+  paired_human_id?: string | null;
   specialty_focus: string | null;
   permissions: DomainMemberPermissions;
   status: DomainMemberStatus;

@@ -7,3 +7,5 @@ export * from './taxonomy';
 export * from './admin';
 export * from './domains';
 export * from './reports';
+export * from './workspace';
+export * from './foundry';

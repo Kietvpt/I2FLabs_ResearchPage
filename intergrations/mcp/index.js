@@ -16845,8 +16845,11 @@ var researchCmsTools = [
         "debate",
         "trade_off",
         "failure_mode",
-        "question"
+        "question",
+        "formal_proof",
+        "ablation"
       ]).optional().default("all").describe("\u0110\u1ECBnh d\u1EA1ng t\xE0i li\u1EC7u nghi\xEAn c\u1EE9u"),
+      publicationTrack: external_exports.enum(["all", "vibe_preprint", "verified_tier1"]).optional().default("all").describe("L\u1ECDc theo t\u1EA7ng xu\u1EA5t b\u1EA3n: vibe_preprint (Open Lab) ho\u1EB7c verified_tier1 (\u0110\xE3 ki\u1EC3m \u0111\u1ECBnh)"),
       limit: external_exports.number().optional().default(10).describe("S\u1ED1 l\u01B0\u1EE3ng k\u1EBFt qu\u1EA3 t\u1ED1i \u0111a")
     }),
     handler: async (args) => {
@@ -16857,9 +16860,14 @@ var researchCmsTools = [
         const liveReports = await fetchSupabase(endpoint);
         const reports = Array.isArray(liveReports) ? liveReports : [];
         const q = (args.query || "").toLowerCase().trim();
-        const filtered = q ? reports.filter(
-          (r) => r.title?.toLowerCase().includes(q) || r.summary?.toLowerCase().includes(q) || r.slug?.toLowerCase().includes(q) || r.domain?.name?.toLowerCase().includes(q)
-        ) : reports;
+        const filtered = reports.filter((r) => {
+          const track = r.publication_track || r.source_metadata?.publication_track || "verified_tier1";
+          if (args.publicationTrack && args.publicationTrack !== "all" && track !== args.publicationTrack) {
+            return false;
+          }
+          if (!q) return true;
+          return r.title?.toLowerCase().includes(q) || r.summary?.toLowerCase().includes(q) || r.slug?.toLowerCase().includes(q) || r.domain?.name?.toLowerCase().includes(q);
+        });
         return {
           content: [
             {
@@ -16917,9 +16925,13 @@ var researchCmsTools = [
         "debate",
         "trade_off",
         "failure_mode",
-        "question"
+        "question",
+        "formal_proof",
+        "ablation"
       ]).default("research"),
       status: external_exports.enum(["draft", "in_review", "published"]).default("draft"),
+      publication_track: external_exports.enum(["vibe_preprint", "verified_tier1"]).optional().describe("T\u1EA7ng xu\u1EA5t b\u1EA3n V2R: vibe_preprint (Gate 1) ho\u1EB7c verified_tier1 (Gate 2, y\xEAu c\u1EA7u confidence >= 0.85)"),
+      confidence_score: external_exports.number().min(0).max(1).optional().describe("Ch\u1EC9 s\u1ED1 h\u1ED9i t\u1EE5 tin c\u1EADy R(n) trong kho\u1EA3ng [0, 1]"),
       human_authors: external_exports.array(external_exports.object({ name: external_exports.string(), role: external_exports.string().optional() })).optional(),
       ai_contributors: external_exports.array(
         external_exports.object({
@@ -16929,11 +16941,27 @@ var researchCmsTools = [
         })
       ).optional(),
       model_used: external_exports.array(external_exports.string()).optional(),
-      tags: external_exports.array(external_exports.string()).optional()
+      tags: external_exports.array(external_exports.string()).optional(),
+      source_metadata: external_exports.record(external_exports.unknown()).optional().describe("Metadata c\xE2y tri th\u1EE9c RDD (node_id, sphere_id, tree_lineage, paired_pods, benchmark_metrics, ...)")
     }),
     handler: async (args) => {
       const generatedSlug = args.slug || args.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "d").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
-      const payload = {
+      const rawMeta = args.source_metadata && typeof args.source_metadata === "object" ? { ...args.source_metadata } : {};
+      const requestedTrack = args.publication_track || rawMeta.publication_track || (args.status === "published" ? "verified_tier1" : "vibe_preprint");
+      const rawConfidence = typeof args.confidence_score === "number" ? args.confidence_score : typeof rawMeta.confidence_score === "number" ? rawMeta.confidence_score : void 0;
+      let effectiveTrack = requestedTrack;
+      let epistemicGateNotice;
+      if (args.status === "published" && requestedTrack === "verified_tier1" && typeof rawConfidence === "number" && rawConfidence < 0.85) {
+        effectiveTrack = "vibe_preprint";
+        epistemicGateNotice = `Confidence R(n)=${rawConfidence} < 0.85: t\u1EF1 \u0111\u1ED9ng ph\xE2n lo\u1EA1i v\u1EC1 track 'vibe_preprint' (Gate 1) \u0111\u1EC3 b\u1EA3o v\u1EC7 chu\u1EA9n Tier-1.`;
+      }
+      const mergedSourceMetadata = {
+        ...rawMeta,
+        cognitive_node_type: args.report_type,
+        publication_track: effectiveTrack,
+        ...typeof rawConfidence === "number" ? { confidence_score: rawConfidence } : {}
+      };
+      const basePayload = {
         title: args.title.trim(),
         slug: generatedSlug,
         summary: args.summary?.trim() || null,
@@ -16941,18 +16969,35 @@ var researchCmsTools = [
         domain_id: args.domain_id || null,
         report_type: args.report_type,
         status: args.status || "draft",
-        human_authors: args.human_authors || [{ name: "Aevum Research Squad", role: "Lead Researcher" }],
+        human_authors: args.human_authors && args.human_authors.length > 0 ? args.human_authors : [{ name: "I2FLabs Research Team", role: "Lead Researcher" }],
         ai_contributors: args.ai_contributors || [],
         model_used: args.model_used || [],
+        source_metadata: mergedSourceMetadata,
         reading_time: Math.max(1, Math.ceil(args.content_md.split(/\s+/).length / 200)),
         published_at: args.status === "published" ? (/* @__PURE__ */ new Date()).toISOString() : null
       };
+      const insertReportWithCompatFallback = async () => {
+        try {
+          return await fetchSupabase("reports", {
+            method: "POST",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify(basePayload)
+          });
+        } catch (firstErr) {
+          const msg = String(firstErr?.message || "");
+          if (msg.includes("reports_report_type_check") && (args.report_type === "formal_proof" || args.report_type === "ablation")) {
+            const compatType = args.report_type === "formal_proof" ? "specification" : "research";
+            return await fetchSupabase("reports", {
+              method: "POST",
+              headers: { Prefer: "return=representation" },
+              body: JSON.stringify({ ...basePayload, report_type: compatType })
+            });
+          }
+          throw firstErr;
+        }
+      };
       try {
-        const liveCreated = await fetchSupabase("reports", {
-          method: "POST",
-          headers: { Prefer: "return=representation" },
-          body: JSON.stringify(payload)
-        });
+        const liveCreated = await insertReportWithCompatFallback();
         if (!Array.isArray(liveCreated) || liveCreated.length === 0) {
           throw new Error("C\u01A1 s\u1EDF d\u1EEF li\u1EC7u Supabase kh\xF4ng ph\u1EA3n h\u1ED3i b\u1EA3n ghi sau khi insert.");
         }
@@ -16964,6 +17009,8 @@ var researchCmsTools = [
                 {
                   success: true,
                   message: `\u0110\xE3 xu\u1EA5t b\u1EA3n th\xE0nh c\xF4ng b\xE0i nghi\xEAn c\u1EE9u "${args.title}" v\xE0o database th\u1EF1c t\u1EBF c\u1EE7a I2FLabs!`,
+                  ...epistemicGateNotice ? { epistemicGateNotice } : {},
+                  publicationTrack: effectiveTrack,
                   source: "supabase_live",
                   persistedToSupabase: true,
                   paper: liveCreated[0],

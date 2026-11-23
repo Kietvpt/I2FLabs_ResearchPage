@@ -16,7 +16,11 @@ export type ReportType =
   | 'specification'
   | 'trade_off'
   | 'debate'
-  | 'failure_mode';
+  | 'failure_mode'
+  | 'formal_proof'
+  | 'ablation';
+
+export type PublicationTrack = 'vibe_preprint' | 'verified_tier1';
 
 export type ReportStatus = 'draft' | 'in_review' | 'published' | 'archived';
 
@@ -35,12 +39,46 @@ export interface AiContributor {
   contribution?: string;
 }
 
+export interface TreeLineageLink {
+  title: string;
+  slug?: string;
+  node_id?: string;
+  node_type?: ReportType | string;
+  edge_type?: string;
+  label?: string;
+  author_persona?: string;
+}
+
+export interface PairedPodAttribution {
+  human: string;
+  agent: string;
+  aid?: string;
+  pod_role?: 'explorer' | 'formalizer' | 'falsifier' | 'curator';
+}
+
 export interface SourceMetadata {
   mission_id?: string;
   node_id?: string;
   sphere_id?: string;
   tier?: number;
   author_persona?: string;
+  cognitive_node_type?: string;
+  publication_track?: PublicationTrack;
+  confidence_score?: number;
+  vibe_tldr?: string;
+  key_takeaways?: string[];
+  paired_pods?: PairedPodAttribution[];
+  peer_review_signoff?: {
+    reviewer?: string;
+    status?: string;
+    consensus_percent?: number;
+  };
+  tree_lineage?: {
+    parent_title?: string;
+    parent_slug?: string;
+    parent_node_id?: string;
+    cross_links?: TreeLineageLink[];
+  };
   inbound_edge?: {
     source_node?: string;
     edge_type?: string;
@@ -69,6 +107,8 @@ export interface Report {
   domain_id?: string | null;
   report_type: ReportType;
   status: ReportStatus;
+  publication_track?: PublicationTrack;
+  confidence_score?: number | null;
   is_featured: boolean;
   version: string;
   reading_time: number;

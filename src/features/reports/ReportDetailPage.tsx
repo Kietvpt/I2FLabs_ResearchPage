@@ -2,17 +2,22 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
+  AlertTriangle,
   ArrowLeft,
   BarChart3,
+  BookOpen,
   Check,
   ChevronDown,
   Copy,
   Edit3,
+  GitBranch,
   ListTree,
   MessageSquare,
   Printer,
   Quote,
   Share2,
+  ShieldCheck,
+  Sparkles,
   Tag as TagIcon,
   Terminal,
 } from 'lucide-react';
@@ -199,6 +204,100 @@ function AtAGlanceCard({ report }: { report: ReportWithRelations }) {
   );
 }
 
+type ReaderLens = 'deep' | 'vibe' | 'reproduce';
+
+function KnowledgeTreeLineageCard({ report }: { report: ReportWithRelations }) {
+  const meta = report.source_metadata || {};
+  const inbound = meta.inbound_edge;
+  const lineage = meta.tree_lineage;
+  const crossLinks = Array.isArray(lineage?.cross_links) ? lineage.cross_links : [];
+  const hasLineage = Boolean(
+    meta.node_id || inbound?.edge_type || lineage?.parent_title || crossLinks.length > 0
+  );
+
+  if (!hasLineage) return null;
+
+  return (
+    <section
+      className="mt-6 rounded-xl border border-border bg-surface/80 p-4 print:hidden"
+      aria-label="Knowledge Tree Lineage"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider text-accent">
+          <GitBranch className="h-3.5 w-3.5" />
+          <span>RDD Knowledge Tree Lineage</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] text-muted">
+          {typeof meta.tier === 'number' && <span>Tier {meta.tier}</span>}
+          {meta.node_id && (
+            <span className="rounded border border-border bg-subtle px-2 py-0.5 text-foreground/80">
+              {meta.node_id}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {(lineage?.parent_title || inbound?.edge_type) && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted">
+          {inbound?.edge_type && (
+            <span className="rounded-md border border-border bg-subtle px-2 py-0.5 font-mono text-[11px] text-foreground">
+              {inbound.edge_label || inbound.edge_type}
+            </span>
+          )}
+          {lineage?.parent_title && (
+            lineage.parent_slug ? (
+              <Link
+                to={`/reports/${lineage.parent_slug}`}
+                className="font-medium text-foreground underline decoration-border underline-offset-4 hover:text-accent"
+              >
+                ← {lineage.parent_title}
+              </Link>
+            ) : (
+              <span className="font-medium text-foreground">← {lineage.parent_title}</span>
+            )
+          )}
+          {inbound?.rationale && (
+            <span className="text-xs text-muted">— {inbound.rationale}</span>
+          )}
+        </div>
+      )}
+
+      {crossLinks.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2 border-t border-border/70 pt-3">
+          {crossLinks.map((link, idx) => {
+            const badge = link.label || link.edge_type || 'linked';
+            const inner = (
+              <>
+                <span className="font-mono text-[10px] uppercase text-accent">{badge}</span>
+                <span className="text-xs text-foreground">{link.title}</span>
+                {link.author_persona && (
+                  <span className="font-mono text-[10px] text-muted">({link.author_persona})</span>
+                )}
+              </>
+            );
+            return link.slug ? (
+              <Link
+                key={`${link.title}-${idx}`}
+                to={`/reports/${link.slug}`}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-subtle/70 px-2.5 py-1 transition hover:border-accent/50"
+              >
+                {inner}
+              </Link>
+            ) : (
+              <span
+                key={`${link.title}-${idx}`}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-subtle/40 px-2.5 py-1"
+              >
+                {inner}
+              </span>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function ReportDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { isAdmin } = useAuth();
@@ -211,6 +310,8 @@ export function ReportDetailPage() {
   const [citeOpen, setCiteOpen] = useState(false);
   const [citeFormat, setCiteFormat] = useState<CitationFormat>('bibtex');
   const [copiedCite, setCopiedCite] = useState(false);
+  const [readerLens, setReaderLens] = useState<ReaderLens>('deep');
+  const [copiedMcpCmd, setCopiedMcpCmd] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['public-report', slug],
@@ -410,6 +511,27 @@ export function ReportDetailPage() {
             )}
             <span>/</span>
             <span>{REPORT_TYPE_LABELS[report.report_type]}</span>
+            {(report.publication_track ?? report.source_metadata?.publication_track) === 'vibe_preprint' ? (
+              <span className="ml-auto inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 font-mono text-[11px] font-medium text-amber-600 dark:text-amber-400">
+                <AlertTriangle className="h-3 w-3" />
+                Gate 1 • Open Vibe Preprint
+                {typeof (report.confidence_score ?? report.source_metadata?.confidence_score) === 'number' && (
+                  <span>
+                    (R={Math.round(((report.confidence_score ?? report.source_metadata?.confidence_score) as number) * 100)}%)
+                  </span>
+                )}
+              </span>
+            ) : (
+              <span className="ml-auto inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-0.5 font-mono text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                <ShieldCheck className="h-3 w-3" />
+                Gate 2 • Tier-1 Verified
+                {typeof (report.confidence_score ?? report.source_metadata?.confidence_score) === 'number' && (
+                  <span>
+                    (R={Math.round(((report.confidence_score ?? report.source_metadata?.confidence_score) as number) * 100)}%)
+                  </span>
+                )}
+              </span>
+            )}
           </nav>
 
           <h1 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]">
@@ -455,6 +577,35 @@ export function ReportDetailPage() {
 
           {/* Structured Metric Highlights (Benchmark / Sandbox / Debate) */}
           <StructuredMetricsCard report={report} />
+
+          {/* RDD Knowledge Tree Lineage Strip */}
+          <KnowledgeTreeLineageCard report={report} />
+
+          {/* 3-Lens Reader Switcher */}
+          <div className="mt-6 flex flex-wrap items-center gap-1.5 rounded-xl border border-border bg-surface p-1.5 print:hidden">
+            {(
+              [
+                { id: 'deep', icon: BookOpen, label: 'Deep Paper & Tree' },
+                { id: 'vibe', icon: Sparkles, label: 'Vibe Brief (3m)' },
+                { id: 'reproduce', icon: Terminal, label: 'Reproducibility & MCP API' },
+              ] as const
+            ).map(({ id, icon: Icon, label }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setReaderLens(id)}
+                className={cn(
+                  'inline-flex flex-1 min-w-[150px] items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition',
+                  readerLens === id
+                    ? 'bg-foreground text-canvas shadow-xs'
+                    : 'text-muted hover:bg-subtle hover:text-foreground'
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
 
           {/* Mobile/Tablet Action Bar + Collapsible TOC */}
           <div className="mt-6 flex flex-wrap items-center gap-2 lg:hidden print:hidden">
@@ -652,9 +803,131 @@ export function ReportDetailPage() {
               </figure>
             )}
 
-            <div ref={articleRef}>
-              <MarkdownRenderer content={report.content_md} />
-            </div>
+            {readerLens === 'vibe' && (
+              <section className="mb-8 space-y-5 rounded-xl border border-border bg-surface p-6">
+                <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider text-accent">
+                  <Sparkles className="h-4 w-4" />
+                  <span>Vibe Brief — 3-Minute Executive Synthesis</span>
+                </div>
+                <p className="text-sm leading-relaxed text-foreground">
+                  {report.source_metadata?.vibe_tldr ||
+                    report.summary ||
+                    'Bản tóm tắt nhanh dành cho độc giả và trưởng nhóm kỹ thuật trước khi đi sâu vào chứng minh và mã nguồn.'}
+                </p>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-lg border border-border bg-subtle/60 p-3.5">
+                    <p className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                      Human Researchers
+                    </p>
+                    <ul className="mt-2 space-y-1 text-xs text-foreground">
+                      {(report.human_authors.length > 0
+                        ? report.human_authors
+                        : [{ name: 'I2FLabs Research Team', role: 'Lead Researcher' }]
+                      ).map((author, i) => (
+                        <li key={i}>
+                          <span className="font-medium">{author.name}</span>
+                          {author.role && <span className="text-muted"> — {author.role}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="rounded-lg border border-border bg-subtle/60 p-3.5">
+                    <p className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                      Specialist AI Twins
+                    </p>
+                    <ul className="mt-2 space-y-1 text-xs text-foreground">
+                      {report.ai_contributors.length > 0 ? (
+                        report.ai_contributors.map((ai, i) => (
+                          <li key={i}>
+                            <span className="font-medium">{ai.agent_name}</span>
+                            {ai.role && <span className="text-muted"> — {ai.role}</span>}
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-muted">Human-Led Research</li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setReaderLens('deep')}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-1.5 text-xs font-medium text-canvas hover:opacity-90"
+                >
+                  <BookOpen className="h-3.5 w-3.5" />
+                  Đọc toàn văn nghiên cứu
+                </button>
+              </section>
+            )}
+
+            {readerLens === 'reproduce' && (
+              <section className="mb-8 space-y-4 rounded-xl border border-border bg-surface p-6">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider text-accent">
+                    <Terminal className="h-4 w-4" />
+                    <span>MCP Reader API & Reproducibility Kit</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const snippet = JSON.stringify(
+                        {
+                          tool: 'i2f_query_research_reports',
+                          arguments: { query: report.slug, reportType: report.report_type, limit: 1 },
+                        },
+                        null,
+                        2
+                      );
+                      await navigator.clipboard.writeText(snippet);
+                      setCopiedMcpCmd(true);
+                      toast.success('Đã sao chép lệnh truy vấn MCP Reader');
+                      setTimeout(() => setCopiedMcpCmd(false), 1800);
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-subtle px-3 py-1 text-xs font-medium text-foreground hover:border-accent"
+                  >
+                    {copiedMcpCmd ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                    <span>{copiedMcpCmd ? 'Đã sao chép' : 'Copy MCP Query'}</span>
+                  </button>
+                </div>
+
+                <p className="text-xs leading-relaxed text-muted">
+                  Các nhà nghiên cứu và tác tử AI đối tác có thể kết nối bằng API Key role{' '}
+                  <code className="rounded bg-subtle px-1.5 py-0.5 font-mono text-foreground">reader</code>{' '}
+                  (<code className="font-mono">mcp_api_keys</code>) để truy xuất trực tiếp bài báo, số liệu benchmark và lineage:
+                </p>
+
+                <pre className="overflow-x-auto rounded-lg border border-border bg-subtle p-3 font-mono text-xs text-foreground">
+{`// MCP Tool Call (@i2flabs/aevum-mcp-server)
+i2f_query_research_reports({
+  "query": "${report.slug}",
+  "reportType": "${report.report_type}",
+  "limit": 1
+})`}
+                </pre>
+
+                {report.model_used.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="font-mono text-muted">Models:</span>
+                    {report.model_used.map((m) => (
+                      <span
+                        key={m}
+                        className="rounded-md border border-border bg-subtle px-2 py-0.5 font-mono text-[11px] text-foreground"
+                      >
+                        {m}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {readerLens === 'deep' && (
+              <div ref={articleRef}>
+                <MarkdownRenderer content={report.content_md} />
+              </div>
+            )}
 
             {/* Tags Footer */}
             {report.tags && report.tags.length > 0 && (

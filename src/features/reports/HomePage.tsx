@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDomains } from '@/context/DomainContext';
-import type { ReportType, ReportWithRelations } from '@/types/database';
+import type { PublicationTrack, ReportType, ReportWithRelations } from '@/types/database';
 import { cn, formatDate } from '@/lib/utils';
 import { fetchPublishedReports, REPORT_TYPE_LABELS } from './api';
 
@@ -96,15 +96,27 @@ function GeometricCover({
 
 
 
+function getReportTrack(report: ReportWithRelations): PublicationTrack {
+  return report.publication_track ?? report.source_metadata?.publication_track ?? 'verified_tier1';
+}
+
 function DeepMindNewsRow({ report }: { report: ReportWithRelations }) {
   const domainName = report.domain?.name ?? report.category?.name;
+  const track = getReportTrack(report);
 
   return (
     <Link to={`/reports/${report.slug}`} className="deepmind-news-row group">
       <div className="news-content">
-        <h3 className="news-title">
-          {report.title}
-        </h3>
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="news-title">
+            {report.title}
+          </h3>
+          {track === 'vibe_preprint' && (
+            <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] font-medium text-amber-600 dark:text-amber-400">
+              Open Lab Preprint
+            </span>
+          )}
+        </div>
         <div className="news-meta">
           <span>{formatDate(report.published_at ?? report.created_at)}</span>
           <span className="separator">•</span>
@@ -180,6 +192,7 @@ function DeepMindSpotlightCard({ report }: { report: ReportWithRelations }) {
 export function HomePage() {
   const { domains, selectedDomain, selectedDomainId, setSelectedDomainId } = useDomains();
   const [selectedType, setSelectedType] = useState<string>('all');
+  const [selectedTrack, setSelectedTrack] = useState<'all' | PublicationTrack>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
 
@@ -194,6 +207,7 @@ export function HomePage() {
 
   const isFiltering =
     selectedType !== 'all' ||
+    selectedTrack !== 'all' ||
     selectedDomainId !== 'all' ||
     searchQuery.trim().length > 0;
 
@@ -229,6 +243,9 @@ export function HomePage() {
       if (selectedType !== 'all' && report.report_type !== selectedType) {
         return false;
       }
+      if (selectedTrack !== 'all' && getReportTrack(report) !== selectedTrack) {
+        return false;
+      }
       if (q) {
         const haystack = [
           report.title,
@@ -252,12 +269,14 @@ export function HomePage() {
     featuredReport,
     selectedDomainId,
     selectedType,
+    selectedTrack,
     searchQuery,
   ]);
 
   const resetFilters = () => {
     setSelectedDomainId('all');
     setSelectedType('all');
+    setSelectedTrack('all');
     setSearchQuery('');
   };
 
@@ -386,7 +405,18 @@ export function HomePage() {
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={selectedTrack}
+              onChange={(e) => setSelectedTrack(e.target.value as 'all' | PublicationTrack)}
+              aria-label="Filter by epistemic track"
+              className="rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium text-foreground focus:outline-none"
+            >
+              <option value="all">All tracks</option>
+              <option value="verified_tier1">Tier-1 Verified</option>
+              <option value="vibe_preprint">Open Lab Preprints</option>
+            </select>
+
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}

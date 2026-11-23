@@ -23,6 +23,8 @@ export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
   trade_off: 'Trade-off Matrix',
   debate: 'Dialectic Debate',
   failure_mode: 'Failure Mode',
+  formal_proof: 'Formal Proof',
+  ablation: 'Ablation Study',
 };
 
 export const COLLABORATION_MODE_LABELS: Record<CollaborationMode, string> = {
@@ -43,17 +45,26 @@ function normalizeReport(row: RawReportRow): ReportWithRelations {
   const { report_tags: _unused, ...rest } = row;
   void _unused;
 
+  const sourceMeta =
+    rest.source_metadata && typeof rest.source_metadata === 'object'
+      ? rest.source_metadata
+      : {};
+
   return {
     ...rest,
+    publication_track:
+      rest.publication_track ?? sourceMeta.publication_track ?? 'verified_tier1',
+    confidence_score:
+      rest.confidence_score ??
+      (typeof sourceMeta.confidence_score === 'number'
+        ? sourceMeta.confidence_score
+        : null),
     human_authors: Array.isArray(rest.human_authors) ? rest.human_authors : [],
     ai_contributors: Array.isArray(rest.ai_contributors)
       ? rest.ai_contributors
       : [],
     model_used: Array.isArray(rest.model_used) ? rest.model_used : [],
-    source_metadata:
-      rest.source_metadata && typeof rest.source_metadata === 'object'
-        ? rest.source_metadata
-        : {},
+    source_metadata: sourceMeta,
     tags,
   };
 }

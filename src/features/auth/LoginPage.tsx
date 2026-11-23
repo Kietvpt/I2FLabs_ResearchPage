@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, FlaskConical, Loader2, Lock, Mail } from 'lucide-react';
+import { ArrowLeft, Loader2, Lock, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import badgeDark from '@/assets/logos/i2f-badge-dark.png';
+import badgeLight from '@/assets/logos/i2f-badge-light.png';
 
 export function LoginPage() {
-  const { user, isAdmin, loading, signInWithPassword } = useAuth();
+  const { user, loading, signInWithPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,7 +19,7 @@ export function LoginPage() {
   const fromPath =
     (location.state as { from?: { pathname?: string } } | null)?.from?.pathname || '/admin';
 
-  if (!loading && user && isAdmin) {
+  if (!loading && user) {
     return <Navigate to={fromPath} replace />;
   }
 
@@ -59,9 +61,16 @@ export function LoginPage() {
 
         <div className="bg-surface border border-border rounded-2xl p-8 shadow-sm">
           <div className="flex items-center gap-2.5 mb-6">
-            <div className="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center">
-              <FlaskConical className="w-5 h-5" />
-            </div>
+            <img
+              src={badgeLight}
+              alt="I2FLabs Logo"
+              className="w-9 h-9 rounded-lg object-contain shadow-sm dark:hidden"
+            />
+            <img
+              src={badgeDark}
+              alt="I2FLabs Logo"
+              className="hidden w-9 h-9 rounded-lg object-contain shadow-sm dark:block"
+            />
             <div>
               <p className="text-xs font-mono uppercase tracking-wider text-muted">
                 I2FLabs Research CMS

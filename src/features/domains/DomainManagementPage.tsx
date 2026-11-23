@@ -38,6 +38,7 @@ import type {
   DomainFacultyRole,
   DomainInput,
   DomainMemberType,
+  PodRole,
   ResearchDomain,
   ResearchDomainMember,
   ResearchDomainResource,
@@ -67,6 +68,13 @@ const FACULTY_ROLES: Array<{ role: DomainFacultyRole; label: string }> = [
   { role: 'researcher', label: 'Nghiên cứu viên' },
   { role: 'fellow', label: 'Cộng tác viên / Nghiên cứu sinh' },
   { role: 'advisor', label: 'Cố vấn Chiến lược' },
+];
+
+const POD_ROLES: Array<{ role: PodRole; label: string }> = [
+  { role: 'explorer', label: 'Explorer (Vibe Sprint)' },
+  { role: 'formalizer', label: 'Formalizer (Math / Spec)' },
+  { role: 'falsifier', label: 'Falsifier (PoC / FMEA)' },
+  { role: 'curator', label: 'Curator (Publish / GEO)' },
 ];
 
 const RESOURCE_TYPES: Array<{ type: ScientificResourceType; label: string }> = [
@@ -708,6 +716,8 @@ function DomainFacultyAndResourcesModal({
   const [newMemberType, setNewMemberType] = useState<DomainMemberType>('human');
   const [newMemberAid, setNewMemberAid] = useState('');
   const [newMemberRole, setNewMemberRole] = useState<DomainFacultyRole>('researcher');
+  const [newMemberPodRole, setNewMemberPodRole] = useState<PodRole>('explorer');
+  const [newMemberPairedHumanId, setNewMemberPairedHumanId] = useState<string>('');
   const [newMemberSpecialty, setNewMemberSpecialty] = useState('');
 
   // Add resource modal form state
@@ -744,6 +754,11 @@ function DomainFacultyAndResourcesModal({
       toast.error('Vui lòng nhập tên thành viên.');
       return;
     }
+    const pairedHuman =
+      newMemberType === 'ai_persona' && newMemberPairedHumanId
+        ? members.find((m) => m.id === newMemberPairedHumanId)
+        : undefined;
+
     try {
       await addDomainMember({
         domain_id: domain.id,
@@ -761,6 +776,8 @@ function DomainFacultyAndResourcesModal({
           can_manage_datasets: true,
           can_manage_telemetry: true,
           can_invite_fellow: false,
+          pod_role: newMemberPodRole,
+          ...(pairedHuman ? { paired_human_id: pairedHuman.id, paired_human_name: pairedHuman.member_name } : {}),
         },
         status: 'active',
       });
@@ -768,6 +785,7 @@ function DomainFacultyAndResourcesModal({
       setIsAddingMember(false);
       setNewMemberName('');
       setNewMemberEmail('');
+      setNewMemberPairedHumanId('');
       void loadData();
     } catch (err: any) {
       toast.error(`Lỗi khi thêm thành viên: ${err.message}`);
@@ -998,18 +1016,74 @@ function DomainFacultyAndResourcesModal({
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-[11px] font-medium text-foreground mb-1">
-                      Mảng chuyên môn phụ trách
-                    </label>
-                    <input
-                      type="text"
-                      value={newMemberSpecialty}
-                      onChange={(e) => setNewMemberSpecialty(e.target.value)}
-                      placeholder="VD: Thụ thể nơ-ron, Tối ưu hóa bộ nhớ, Kiểm toán định lượng..."
-                      className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-accent"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-medium text-foreground mb-1">
+                        Vai trò Centaur Pod (V2R-SRP)
+                      </label>
+                      <select
+                        value={newMemberPodRole}
+                        onChange={(e) => setNewMemberPodRole(e.target.value as PodRole)}
+                        className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-accent"
+                      >
+                        {POD_ROLES.map((pr) => (
+                          <option key={pr.role} value={pr.role}>
+                            {pr.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {newMemberType === 'ai_persona' ? (
+                      <div>
+                        <label className="block text-[11px] font-medium text-foreground mb-1">
+                          Ghép cặp 1-1 với Human Researcher
+                        </label>
+                        <select
+                          value={newMemberPairedHumanId}
+                          onChange={(e) => setNewMemberPairedHumanId(e.target.value)}
+                          className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-accent"
+                        >
+                          <option value="">Shared Council Agent (Dùng chung)</option>
+                          {members
+                            .filter((m) => m.member_type === 'human')
+                            .map((hm) => (
+                              <option key={hm.id} value={hm.id}>
+                                Twin của {hm.member_name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="block text-[11px] font-medium text-foreground mb-1">
+                          Mảng chuyên môn phụ trách
+                        </label>
+                        <input
+                          type="text"
+                          value={newMemberSpecialty}
+                          onChange={(e) => setNewMemberSpecialty(e.target.value)}
+                          placeholder="VD: Thụ thể nơ-ron, Tối ưu hóa bộ nhớ..."
+                          className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-accent"
+                        />
+                      </div>
+                    )}
                   </div>
+
+                  {newMemberType === 'ai_persona' && (
+                    <div>
+                      <label className="block text-[11px] font-medium text-foreground mb-1">
+                        Mảng chuyên môn phụ trách
+                      </label>
+                      <input
+                        type="text"
+                        value={newMemberSpecialty}
+                        onChange={(e) => setNewMemberSpecialty(e.target.value)}
+                        placeholder="VD: Thụ thể nơ-ron, Tối ưu hóa bộ nhớ, Kiểm toán định lượng..."
+                        className="w-full rounded-lg border border-border bg-canvas px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-accent"
+                      />
+                    </div>
+                  )}
 
                   <div className="flex justify-end gap-2 pt-1">
                     <button
@@ -1059,6 +1133,16 @@ function DomainFacultyAndResourcesModal({
                             {m.member_type === 'ai_persona' && (
                               <span className="rounded border border-border/70 bg-canvas px-1.5 py-0.5 text-[10px] font-mono text-muted">
                                 {m.persona_aid || 'AID'}
+                              </span>
+                            )}
+                            {(m.pod_role || m.permissions?.pod_role) && (
+                              <span className="rounded border border-accent/30 bg-accent-soft px-1.5 py-0.5 text-[10px] font-mono text-accent">
+                                Pod: {m.pod_role || m.permissions?.pod_role}
+                              </span>
+                            )}
+                            {m.member_type === 'ai_persona' && m.permissions?.paired_human_name && (
+                              <span className="rounded border border-border/60 bg-subtle px-1.5 py-0.5 text-[10px] text-foreground/80">
+                                Twin ↔ {m.permissions.paired_human_name}
                               </span>
                             )}
                           </div>

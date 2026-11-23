@@ -1,0 +1,23 @@
+{
+  "name": "I2FLabs Research — Human–AI Collaborative Research",
+  "short_name": "I2FLabs Research",
+  "description": "Thư viện báo cáo nghiên cứu, kiến trúc hệ thống và thực nghiệm cộng sinh Human–AI của I2FLabs Vietnam.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

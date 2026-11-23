@@ -46,8 +46,12 @@ export interface ResearchPaperPayload {
     | 'debate'
     | 'trade_off'
     | 'failure_mode'
-    | 'question';
+    | 'question'
+    | 'formal_proof'
+    | 'ablation';
   status?: 'draft' | 'in_review' | 'published';
+  publication_track?: 'vibe_preprint' | 'verified_tier1';
+  confidence_score?: number;
   is_featured?: boolean;
   version?: string;
   tags?: string[];

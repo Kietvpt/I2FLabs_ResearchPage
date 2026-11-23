@@ -49,6 +49,7 @@ import type {
   AiContributor,
   CollaborationMode,
   HumanAuthor,
+  PublicationTrack,
   ReportInput,
   ReportStatus,
   ReportType,
@@ -60,8 +61,10 @@ type ViewMode = 'write' | 'split' | 'preview';
 const REPORT_TYPES: Array<{ value: ReportType; label: string }> = [
   { value: 'whitepaper', label: 'Whitepaper (Master)' },
   { value: 'research', label: 'Research Paper' },
+  { value: 'formal_proof', label: 'Formal Proof (Math/Big-O)' },
   { value: 'benchmark', label: 'Benchmark / Telemetry' },
   { value: 'empirical_poc', label: 'Empirical PoC' },
+  { value: 'ablation', label: 'Ablation Study' },
   { value: 'specification', label: 'Specification / RFC' },
   { value: 'hypothesis', label: 'Hypothesis' },
   { value: 'debate', label: 'Dialectic Debate' },
@@ -699,6 +702,52 @@ export function ReportEditorPage() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-medium text-foreground mb-1">
+                    Epistemic Track
+                  </label>
+                  <select
+                    value={sourceMetadata.publication_track || 'verified_tier1'}
+                    onChange={(e) =>
+                      setSourceMetadata((prev) => ({
+                        ...prev,
+                        publication_track: e.target.value as PublicationTrack,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-border bg-canvas px-2 py-1.5 text-xs text-foreground focus:outline-none focus:border-foreground/40"
+                  >
+                    <option value="verified_tier1">Gate 2 • Tier-1</option>
+                    <option value="vibe_preprint">Gate 1 • Vibe Lab</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-foreground mb-1">
+                    Confidence R(n)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={
+                      typeof sourceMetadata.confidence_score === 'number'
+                        ? sourceMetadata.confidence_score
+                        : ''
+                    }
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      setSourceMetadata((prev) => ({
+                        ...prev,
+                        confidence_score: raw === '' ? undefined : Math.min(1, Math.max(0, Number(raw))),
+                      }));
+                    }}
+                    placeholder="0.90"
+                    className="w-full rounded-lg border border-border bg-canvas px-2 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:border-foreground/40"
+                  />
+                </div>
               </div>
             </div>
 

@@ -6,6 +6,8 @@ import { useAuth } from '@/context/AuthContext';
 import { CommandSearch } from '@/features/reports/CommandSearch';
 import { DomainSelector } from '@/components/domains/DomainSelector';
 import { cn } from '@/lib/utils';
+import badgeDark from '@/assets/logos/i2f-badge-dark.png';
+import badgeLight from '@/assets/logos/i2f-badge-light.png';
 
 interface PublicLayoutProps {
   children?: ReactNode;
@@ -36,9 +38,16 @@ export function PublicLayout({ children }: PublicLayoutProps) {
               to="/"
               className="group flex items-center gap-2.5 text-foreground focus:outline-none"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface font-mono text-xs font-bold tracking-tight text-accent shadow-sm transition group-hover:border-accent/50">
-                I2F
-              </span>
+              <img
+                src={badgeLight}
+                alt="I2FLabs Logo"
+                className="h-8 w-8 rounded-lg object-contain shadow-sm dark:hidden"
+              />
+              <img
+                src={badgeDark}
+                alt="I2FLabs Logo"
+                className="hidden h-8 w-8 rounded-lg object-contain shadow-sm dark:block"
+              />
               <div className="flex items-baseline gap-1.5">
                 <span className="font-serif text-lg font-semibold tracking-tight">
                   I2FLabs

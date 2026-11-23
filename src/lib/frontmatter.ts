@@ -27,24 +27,54 @@ const VALID_REPORT_TYPES: ReportType[] = [
   'trade_off',
   'debate',
   'failure_mode',
+  'formal_proof',
+  'ablation',
 ];
 
 const PERSONA_ROLES: Record<string, { role: string; contribution: string }> = {
   An: {
-    role: 'Tech Lead & AI Research Companion',
-    contribution: 'Tổng hợp học thuật, thiết kế giao thức & định hướng nghiên cứu',
+    role: 'Tech Lead & Process Standardization',
+    contribution: 'Tổng hợp học thuật, chuẩn hóa quy trình & phanh FMEA 3 tầng',
   },
   Vidus: {
     role: 'System Architect & Critical Reviewer',
-    contribution: 'Phân tích kiến trúc, đánh đổi kỹ thuật & chế độ lỗi (FMEA)',
+    contribution: 'Phân tích kiến trúc, đặc tả hệ thống & đánh đổi kỹ thuật',
   },
   Luna: {
     role: 'UI/UX & Cognitive Ergonomics Specialist',
     contribution: 'Giả thuyết không gian tối giản & trải nghiệm nhận thức',
   },
   Zenith: {
-    role: 'Empirical Benchmark & Telemetry Engineer',
-    contribution: 'Thực nghiệm Sandbox PoC & đo lường định lượng Telemetry',
+    role: 'Algorithmic & Mathematical Modeler',
+    contribution: 'Chứng minh hình thức (Formal Proof), phân tích Big-O & mô hình hóa',
+  },
+  Kai: {
+    role: 'Multi-Agent Swarm & PoC Architect',
+    contribution: 'Thực nghiệm Sandbox PoC & điều phối giao thức MCP',
+  },
+  Nia: {
+    role: 'Cognitive Mapping & Benchmark Lead',
+    contribution: 'Đo kiểm định lượng, telemetry & đánh giá tải nhận thức',
+  },
+  Valerie: {
+    role: 'Peer Review & Epistemic Rigor Lead',
+    contribution: 'Thẩm định phản biện đồng đẳng & chống ảo giác số liệu',
+  },
+  Iris: {
+    role: 'Behavioral & Cognitive Experience Researcher',
+    contribution: 'Đặt câu hỏi nền tảng & khảo sát ma sát nhận thức',
+  },
+  Mira: {
+    role: 'Research Operations & Pod Strategist',
+    contribution: 'Thiết kế mô hình phân bổ nhân sự, Pod & GTM',
+  },
+  Union: {
+    role: 'Workflow Orchestration & DX Lead',
+    contribution: 'Tối ưu hóa chuyển mạch quy trình & ma trận đánh đổi',
+  },
+  Maya: {
+    role: 'Research Storytelling & Reader Growth',
+    contribution: 'Ablation tiếp cận độc giả, GEO & trích dẫn cộng đồng',
   },
 };
 
@@ -58,6 +88,7 @@ function normalizeReportType(rawType: unknown, filename?: string): ReportType {
     if (cleaned === 'spec') return 'specification';
     if (cleaned === 'tradeoff') return 'trade_off';
     if (cleaned === 'failure') return 'failure_mode';
+    if (cleaned === 'proof' || cleaned === 'formal') return 'formal_proof';
   }
 
   if (filename) {
@@ -65,6 +96,8 @@ function normalizeReportType(rawType: unknown, filename?: string): ReportType {
     if (lower.includes('benchmark')) return 'benchmark';
     if (lower.includes('debate')) return 'debate';
     if (lower.includes('failure_mode') || lower.includes('fmea')) return 'failure_mode';
+    if (lower.includes('formal_proof')) return 'formal_proof';
+    if (lower.includes('ablation')) return 'ablation';
     if (lower.includes('hypothesis')) return 'hypothesis';
     if (lower.includes('poc')) return 'empirical_poc';
     if (lower.includes('question')) return 'question';
@@ -80,11 +113,13 @@ function suggestCategorySlug(reportType: ReportType, filename?: string): string 
   switch (reportType) {
     case 'benchmark':
     case 'empirical_poc':
+    case 'ablation':
       return 'benchmarks-telemetry';
     case 'debate':
       return 'human-ai-debates';
     case 'specification':
     case 'trade_off':
+    case 'formal_proof':
       return 'engineering-specs';
     case 'failure_mode':
       return 'system-architecture';
@@ -318,6 +353,13 @@ export function parseResearchMarkdown(
     'sphere_id',
     'tier',
     'author_persona',
+    'publication_track',
+    'confidence_score',
+    'vibe_tldr',
+    'key_takeaways',
+    'paired_pods',
+    'peer_review_signoff',
+    'tree_lineage',
     'inbound_edge',
     'benchmark_metrics',
     'sandbox_details',
